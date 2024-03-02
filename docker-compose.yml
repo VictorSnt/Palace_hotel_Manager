@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  palace_api:
+    container_name: palace_api
+    build: 
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api:/api
+      - ./data/web/static:/data/web/static/
+      - ./data/web/media:/data/web/media/
+    env_file:
+      - ./.env
+    depends_on:
+      - palace_psql
+  
+  palace_psql:
+    container_name: palace_psql
+    image: postgres:13-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data
+    env_file:
+    - ./.env
