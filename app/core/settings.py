@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'ninja_jwt',
     'ninja_extra',
 ]
-
+NINJA_EXTRA={
+    'PAGINATION_CLASS': 'ninja_extra.pagination.LimitOffsetPagination'
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

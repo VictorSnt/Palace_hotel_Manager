@@ -8,6 +8,8 @@ django = "*"
 django-ninja = "*"
 django-ninja-jwt = "*"
 psycopg2-binary = "*"
+factory-boy = "*"
+typing-extensions = "*"
 
 [dev-packages]
 
