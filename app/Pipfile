@@ -10,6 +10,7 @@ django-ninja-jwt = "*"
 psycopg2-binary = "*"
 factory-boy = "*"
 typing-extensions = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

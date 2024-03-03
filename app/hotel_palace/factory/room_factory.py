@@ -17,6 +17,6 @@ class RoomFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Room
 
-    room_number = factory.Sequence(lambda n: f'{n:03d}')
+    number = factory.Sequence(lambda n: f'{n:03d}')
     status = factory.Iterator([s.value for s in RoomStatus])
     category = factory.SubFactory(RoomCategoryFactory)

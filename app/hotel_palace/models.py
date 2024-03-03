@@ -1,8 +1,8 @@
 from django.db import models
-from .enums.brazilian_states import BrazilianStates
-from .enums.marital_status import MaritalStatus
-from .enums.room_status import RoomStatus
-from .enums.gender import Gender
+from .utils.enums.brazilian_states import BrazilianStates
+from .utils.enums.marital_status import MaritalStatus
+from .utils.enums.room_status import RoomStatus
+from .utils.enums.gender import Gender
 import uuid
 
 
