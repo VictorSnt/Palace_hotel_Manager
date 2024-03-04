@@ -1,5 +1,5 @@
 import factory
-from ..models import Room, RoomCategory, Product
+from ..models import Room, RoomCategory
 from ..utils.enums.room_status import RoomStatus
 
 class RoomFactory(factory.django.DjangoModelFactory):
@@ -13,9 +13,3 @@ class RoomFactory(factory.django.DjangoModelFactory):
         three_guest_price=250, four_guest_price=300
     )
     
-class ProductFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Product
-    
-    description = factory.Faker('word')
-    price = factory.Faker('random_number', digits=3)

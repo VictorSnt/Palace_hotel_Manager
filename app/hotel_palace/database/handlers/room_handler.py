@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from ...models import Room
 
 class RoomHandler:
@@ -11,7 +12,7 @@ class RoomHandler:
         return Room.objects.all().order_by('number')
     
     @staticmethod
-    def get_rooms_by_ids(ids: List[int]) -> List[Room]:
+    def get_rooms_by_ids(ids: List[UUID]) -> List[Room]:
         """
         Retorna uma lista de salas com IDs fornecidos.
         """
