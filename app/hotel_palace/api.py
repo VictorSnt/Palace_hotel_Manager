@@ -5,6 +5,7 @@ from .controllers.room_category_controller import RoomCategoryController
 from .controllers.products_controller import ProductController
 from .controllers.customer_controller import CustomerController
 from .controllers.room_controller import RoomController
+from .controllers.accommodation_controller import AccommodationController
 from .handlers.exception_handlers import exception_handler
 
 api = NinjaExtraAPI()
@@ -15,4 +16,5 @@ api.register_controllers(RoomCategoryController)
 api.register_controllers(RoomController)
 api.register_controllers(ProductController)
 api.register_controllers(CustomerController)
+api.register_controllers(AccommodationController)
 
