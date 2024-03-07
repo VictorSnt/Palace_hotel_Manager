@@ -7,7 +7,7 @@ from .utils.enums.gender import Gender
 import uuid
 
 
-class RoomCategory(models.Model):
+class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=255, unique=True, null=False)
     one_guest_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -81,14 +81,14 @@ class Room(models.Model):
         choices=[(s.value, s.name) for s in RoomStatus],
         default='FREE'
     )
-    category = models.ForeignKey(RoomCategory, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.number)
 
-class RoomAccommodation(models.Model):
+class Accommodation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     room = models.ForeignKey(
         Room, on_delete=models.PROTECT, related_name='accommodations'
@@ -120,10 +120,10 @@ class RoomAccommodation(models.Model):
     def __str__(self):
         return f'Reservation {self.checkout_date} for Room {self.room_id}'
 
-class ProductConsume(models.Model):
+class Consume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     room_reservation = models.ForeignKey(
-        RoomAccommodation, on_delete=models.PROTECT, related_name='consumes')
+        Accommodation, on_delete=models.PROTECT, related_name='consumes')
     room = models.ForeignKey(Room, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.IntegerField()
@@ -135,7 +135,7 @@ class ProductConsume(models.Model):
     def __str__(self):
         return f'Product {self.product} consumed in Room {self.room}'
 
-class RoomReservation(models.Model):
+class Reservation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     room = models.ForeignKey(
         Room, on_delete=models.PROTECT, related_name='reservations'

@@ -1,11 +1,11 @@
 from typing import List
-from ..database.handlers.database_handler import DataBaseHandler
-from ..models import Room
-from ..schemas.room_schemas import RoomResponseSchema
-from ..schemas.database_filter import DBFilter
-from ..validators.id_validator import IDValidator
-from ..validators.db_validators import DBValidator
-from ..services.parsers import IDParser
+from ...database.handlers.database_handler import DataBaseHandler
+from ...models import Room
+from ...schemas.room_schemas import RoomResponseSchema
+from ...schemas.database_filter import DBFilter
+from ...validators.id_validator import IDValidator
+from ...validators.db_validators import DBValidator
+from ...services.trasformators.parsers import IDParser
 
 class RoomService:
     

@@ -1,5 +1,3 @@
-from uuid import UUID
-
 class IDParser:
     @staticmethod
     def paser_ids_by_comma(ids: str) -> list[str]:

@@ -1,10 +1,10 @@
 from ninja import ModelSchema
-from ..models import ProductConsume
+from ..models import Consume
 
 
-class ProductConsumeSchema(ModelSchema):
+class ConsumeSchema(ModelSchema):
     class Config:
-        model = ProductConsume
+        model = Consume
         model_fields = [
             'id', 'room_reservation', 'room',
             'product', 'quantity', 'unit_price',

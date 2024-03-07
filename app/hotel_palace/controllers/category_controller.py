@@ -4,25 +4,25 @@ from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
 
-from ..services.room_category_service import RoomCategoryService
-from ..schemas.room_category_schemas import RoomCategoryResponseSchema
+from ..services.controller_services.room_category_service import CategoryService
+from ..schemas.category_schemas import CategoryResponseSchema
 from ..schemas.database_filter import DBFilter
 
 @api_controller('/category', tags=['Category'])
-class RoomCategoryController:
+class CategoryController:
     
     @route.get('', 
-        response=PaginatedResponseSchema[RoomCategoryResponseSchema]
+        response=PaginatedResponseSchema[CategoryResponseSchema]
     )
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_rooms(self, dbfilter: Query[DBFilter]):
-        categories = RoomCategoryService.get_all_categories(dbfilter)
+        categories = CategoryService.get_all_categories(dbfilter)
         return categories
     
     @route.get('/{ids}', 
-        response=PaginatedResponseSchema[RoomCategoryResponseSchema]
+        response=PaginatedResponseSchema[CategoryResponseSchema]
     )
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_rooms_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        categories = RoomCategoryService.get_categories_by_ids(ids, dbfilter)
+        categories = CategoryService.get_categories_by_ids(ids, dbfilter)
         return categories

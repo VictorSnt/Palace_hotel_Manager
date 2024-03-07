@@ -4,7 +4,7 @@ from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
 
-from ..services.room_service import RoomService
+from ..services.controller_services.room_service import RoomService
 from ..schemas.room_schemas import RoomResponseSchema
 from ..schemas.database_filter import DBFilter
 

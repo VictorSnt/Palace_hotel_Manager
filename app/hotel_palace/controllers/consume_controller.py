@@ -3,19 +3,19 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
-from ..schemas.product_consume_schema import ProductConsumeSchema
+from ..schemas.consume_schema import ConsumeSchema
 from ..schemas.database_filter import DBFilter
-from ..services.product_consume_service import ProductConsumeService
+from ..services.controller_services.consume_service import ConsumeService
 
 @api_controller('/consume', tags=['Consumes'])
-class ProductConsumeController:
+class ConsumeController:
     
-    @route.get('', response=PaginatedResponseSchema[ProductConsumeSchema])
+    @route.get('', response=PaginatedResponseSchema[ConsumeSchema])
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_products(self, dbfilter: Query[DBFilter]):
-        return ProductConsumeService.get_all_consumes(dbfilter)
+        return ConsumeService.get_all_consumes(dbfilter)
     
-    @route.get('/{ids}', response=PaginatedResponseSchema[ProductConsumeSchema])
+    @route.get('/{ids}', response=PaginatedResponseSchema[ConsumeSchema])
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_products_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ProductConsumeService.get_consumes_by_ids(ids, dbfilter)
+        return ConsumeService.get_consumes_by_ids(ids, dbfilter)

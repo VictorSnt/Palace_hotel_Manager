@@ -5,7 +5,7 @@ from ninja_extra.pagination import (
 )
 from ..schemas.customer_schema import CustomerSchema
 from ..schemas.database_filter import DBFilter
-from ..services.customer_service import CustomerService
+from ..services.controller_services.customer_service import CustomerService
 
 @api_controller('/customer', tags=['Customer'])
 class CustomerController:

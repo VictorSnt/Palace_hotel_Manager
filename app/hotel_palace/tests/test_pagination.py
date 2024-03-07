@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from ..factory.room_factory import RoomFactory
-from ..models import RoomCategory, Room
+from ..models import Category, Room
 
 class PaginationAndSortingTest(TestCase):
     def setUp(self):
@@ -8,7 +8,7 @@ class PaginationAndSortingTest(TestCase):
         self.create_rooms()
         
     def create_rooms(self):
-        category = RoomCategory.objects.get_or_create(
+        category = Category.objects.get_or_create(
             description='padrão', one_guest_price=90, two_guest_price=170, 
             three_guest_price=250, four_guest_price=300
         )[0]

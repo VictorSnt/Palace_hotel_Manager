@@ -5,7 +5,7 @@ from ninja_extra.pagination import (
 )
 from ..schemas.products_schema import ProductsSchema
 from ..schemas.database_filter import DBFilter
-from ..services.product_service import ProductService
+from ..services.controller_services.product_service import ProductService
 
 @api_controller('/products', tags=['Products'])
 class ProductController:

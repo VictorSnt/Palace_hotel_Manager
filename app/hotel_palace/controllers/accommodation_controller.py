@@ -3,13 +3,14 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
-from ..schemas.room_accomodation_schema import RoomAccommodationSchema
 from ..schemas.database_filter import DBFilter
-from ..services.accommodation_service import AccommodationService
+from ..schemas.accomodation_schema import AccommodationSchema
+from ..services.controller_services.accommodation_service import (
+    AccommodationService
+)
 
 
-PaginatedAccommodations = PaginatedResponseSchema[RoomAccommodationSchema]
-
+PaginatedAccommodations = PaginatedResponseSchema[AccommodationSchema]
 @api_controller('/accommodation', tags=['Accommodations'])
 class AccommodationController:
     
