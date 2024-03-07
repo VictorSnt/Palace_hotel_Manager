@@ -11,5 +11,5 @@ class RoomFactory(factory.django.DjangoModelFactory):
     category = RoomCategory.objects.get_or_create(
         description='padrão', one_guest_price=90, two_guest_price=170, 
         three_guest_price=250, four_guest_price=300
-    )
+    )[0]
     

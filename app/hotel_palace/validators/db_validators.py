@@ -10,7 +10,7 @@ class DBValidator:
         if not queryset.exists():
             ErrorPayloadGenerator.generate_error_payload(
                 exc=DBValidationError,
-                status_code=422,
+                status_code=404,
                 type='NotFoundOnDbError',
                 title='Empty queryset',
                 detail='No data returned from your query'
