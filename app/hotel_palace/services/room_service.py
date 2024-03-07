@@ -17,7 +17,6 @@ class RoomService:
     
     @staticmethod
     def get_rooms_by_ids(ids: str, dbfilter: DBFilter) -> List[RoomResponseSchema]:
-        IDValidator.is_valid_id_type(ids)
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         rooms = DataBaseHandler.get_by_ids(Room, parsed_ids, dbfilter)

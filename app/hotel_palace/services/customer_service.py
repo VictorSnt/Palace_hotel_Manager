@@ -17,7 +17,6 @@ class CustomerService:
     
     @staticmethod
     def get_customers_by_ids(ids: str, dbfilter: DBFilter) -> List[CustomerSchema]:
-        IDValidator.is_valid_id_type(ids)
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         customers = DataBaseHandler.get_by_ids(Customer, parsed_ids, dbfilter)

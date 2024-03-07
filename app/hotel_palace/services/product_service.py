@@ -17,7 +17,6 @@ class ProductService:
     
     @staticmethod
     def get_products_by_ids(ids: str, dbfilter: DBFilter) -> List[ProductsSchema]:
-        IDValidator.is_valid_id_type(ids)
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         products = DataBaseHandler.get_by_ids(Product, parsed_ids, dbfilter)

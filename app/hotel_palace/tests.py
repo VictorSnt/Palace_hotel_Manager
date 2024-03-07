@@ -16,4 +16,12 @@ class TestRoomServices(TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 404)
+    
+    def test_get_room_by_id_when_uuid_is_invalid(self):
         
+        invalid_uuid = 1
+        response = self.client.get(
+            f'/api/room/{invalid_uuid}',
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 422)
