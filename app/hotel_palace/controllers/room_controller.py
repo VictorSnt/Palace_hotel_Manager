@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from ninja import Query
 from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
@@ -5,7 +6,7 @@ from ninja_extra.pagination import (
 )
 
 from ..services.controller_services.room_service import RoomService
-from ..schemas.models.room_schemas import RoomSchema
+from ..schemas.models.room_schemas import RoomSchema, RoomCreationSchema
 from ..schemas.query_strings.database_filter import DBFilter
 
 @api_controller('/room', tags=['Room'])
@@ -23,3 +24,8 @@ class RoomController:
         rooms = RoomService.get_rooms_by_ids(ids, dbfilter)
         return rooms
     
+    @route.post('')
+    def create_room(self, room: RoomCreationSchema):
+        status_code = RoomService.create_room(room=room)
+        return HttpResponse(status=status_code)
+        

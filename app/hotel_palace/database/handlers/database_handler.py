@@ -3,6 +3,8 @@ from django.db.models import Model
 from typing import List
 from uuid import UUID
 
+from ninja import Schema
+
 from ...schemas.query_strings.database_filter import DBFilter
 
 
@@ -61,6 +63,14 @@ class DataBaseHandler:
             queryset = DataBaseHandler.__order_by(queryset, dbfilter)
         return queryset
 
+    @staticmethod
+    def get_or_create(model_class: Model, id: UUID):
+        return model_class.objects.get_or_create(id=id)[0]
+    
+    @staticmethod
+    def create(model_class: Model, model_schema: Schema):
+        model_class.objects.create(**model_schema.model_dump())
+    
     @staticmethod
     def __order_by(queryset: QuerySet, dbfilter: DBFilter) -> QuerySet:
         """

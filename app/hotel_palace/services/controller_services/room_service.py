@@ -1,7 +1,7 @@
 from typing import List
 from ...database.handlers.database_handler import DataBaseHandler
-from ...models import Room
-from ...schemas.models.room_schemas import RoomSchema
+from ...models import Room, Category
+from ...schemas.models.room_schemas import RoomSchema, RoomCreationSchema
 from ...schemas.query_strings.database_filter import DBFilter
 from ...validators.id_validator import IDValidator
 from ...validators.db_validators import DBValidator
@@ -22,3 +22,10 @@ class RoomService:
         rooms = DataBaseHandler.get_by_ids(Room, parsed_ids, dbfilter)
         DBValidator.is_valid_and_not_empty_queryset(rooms)
         return rooms
+    
+    @staticmethod
+    def create_room(room: RoomCreationSchema) -> int:
+        category = DataBaseHandler.get_or_create(Category, room.category)
+        room.category = category
+        DataBaseHandler.create(Room, room)
+        return 201
