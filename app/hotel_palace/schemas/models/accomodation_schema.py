@@ -1,5 +1,5 @@
 from ninja import ModelSchema
-from ..models import Accommodation
+from ...models import Accommodation
 
 
 class AccommodationSchema(ModelSchema):

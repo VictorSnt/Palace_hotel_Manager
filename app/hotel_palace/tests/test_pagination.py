@@ -1,5 +1,4 @@
 from django.test import TestCase, Client
-from ..factory.room_factory import RoomFactory
 from ..models import Category, Room
 
 class PaginationAndSortingTest(TestCase):

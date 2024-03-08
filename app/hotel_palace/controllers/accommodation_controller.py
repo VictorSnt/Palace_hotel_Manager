@@ -3,8 +3,8 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
-from ..schemas.database_filter import DBFilter
-from ..schemas.accomodation_schema import AccommodationSchema
+from ..schemas.query_strings.database_filter import DBFilter
+from ..schemas.models.accomodation_schema import AccommodationSchema
 from ..services.controller_services.accommodation_service import (
     AccommodationService
 )

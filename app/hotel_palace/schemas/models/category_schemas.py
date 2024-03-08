@@ -1,6 +1,6 @@
 from typing import List
 from ninja import ModelSchema
-from ..models import Category
+from ...models import Category
 
 
 class CategoryResponseSchema(ModelSchema):

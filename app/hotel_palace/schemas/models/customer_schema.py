@@ -1,5 +1,5 @@
 from ninja import ModelSchema
-from ..models import Customer
+from ...models import Customer
 
 class CustomerSchema(ModelSchema):
     class Config:

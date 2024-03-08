@@ -1,5 +1,5 @@
 from ninja import ModelSchema
-from ..models import Consume
+from ...models import Consume
 
 
 class ConsumeSchema(ModelSchema):

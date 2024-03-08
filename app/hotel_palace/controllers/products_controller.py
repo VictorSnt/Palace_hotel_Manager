@@ -3,8 +3,8 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
-from ..schemas.products_schema import ProductsSchema
-from ..schemas.database_filter import DBFilter
+from ..schemas.models.product_schema import ProductsSchema
+from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.product_service import ProductService
 
 @api_controller('/products', tags=['Products'])

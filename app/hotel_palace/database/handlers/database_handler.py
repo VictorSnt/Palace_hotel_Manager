@@ -3,7 +3,7 @@ from django.db.models import Model
 from typing import List
 from uuid import UUID
 
-from ...schemas.database_filter import DBFilter
+from ...schemas.query_strings.database_filter import DBFilter
 
 
 class DataBaseHandler:

@@ -1,5 +1,5 @@
 from ninja import ModelSchema
-from ..models import Product
+from ...models import Product
 
 
 class ProductsSchema(ModelSchema):

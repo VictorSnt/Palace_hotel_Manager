@@ -5,19 +5,19 @@ from ninja_extra.pagination import (
 )
 
 from ..services.controller_services.room_service import RoomService
-from ..schemas.room_schemas import RoomResponseSchema
-from ..schemas.database_filter import DBFilter
+from ..schemas.models.room_schemas import RoomSchema
+from ..schemas.query_strings.database_filter import DBFilter
 
 @api_controller('/room', tags=['Room'])
 class RoomController:
     
-    @route.get('', response=PaginatedResponseSchema[RoomResponseSchema])
+    @route.get('', response=PaginatedResponseSchema[RoomSchema])
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_rooms(self, dbfilter: Query[DBFilter]):
         rooms = RoomService.get_all_rooms(dbfilter)
         return rooms
     
-    @route.get('/{ids}', response=PaginatedResponseSchema[RoomResponseSchema])
+    @route.get('/{ids}', response=PaginatedResponseSchema[RoomSchema])
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_rooms_by_id(self, ids: str, dbfilter: Query[DBFilter]):
         rooms = RoomService.get_rooms_by_ids(ids, dbfilter)

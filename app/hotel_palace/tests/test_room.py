@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 
-class TestRoomServices(TestCase):
+class TestHotelServices(TestCase):
     def setUp(self):
         self.client = Client()
     
@@ -34,17 +34,17 @@ class TestRoomServices(TestCase):
         )
         self.assertEqual(response.status_code, 422)
         
-    def test_get_rooms(self):
+    def test_get_consumes(self):
         response = self.client.get(
-            '/api/room',
+            '/api/consume',
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 404)
         
-    def test_get_rooms_by_ids_when_ids_are_invalid(self):
+    def test_get_consumes_by_ids_when_ids_are_invalid(self):
         invalid_ids = '1,2,3'
         response = self.client.get(
-            f'/api/room/{invalid_ids}',
+            f'/api/consume/{invalid_ids}',
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 422)
@@ -90,6 +90,21 @@ class TestRoomServices(TestCase):
         invalid_ids = '1,2,3'
         response = self.client.get(
             f'/api/accommodation/{invalid_ids}',
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 422)
+        
+    def test_get_reservations(self):
+        response = self.client.get(
+            '/api/reservation',
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 404)
+        
+    def test_get_reservations_by_ids_when_ids_are_invalid(self):
+        invalid_ids = '1,2,3'
+        response = self.client.get(
+            f'/api/reservation/{invalid_ids}',
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 422)
