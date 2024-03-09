@@ -1,5 +1,5 @@
 import json
-from ...validators.exceptions import ValidationError
+from .exceptions import ValidationError
 
 class ErrorPayloadGenerator:
     @staticmethod

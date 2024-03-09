@@ -10,7 +10,10 @@ from ...schemas.query_strings.database_filter import DBFilter
 
 class DataBaseHandler:
     @staticmethod
-    def get_all(model_class: Model, dbfilter: DBFilter) -> QuerySet[Model]:
+    def get_all(
+        model_class: Model, 
+        dbfilter: DBFilter = None
+        ) -> QuerySet[Model]:
         """
         Retorna uma queryset de todas as instâncias do modelo especificado.
 
@@ -29,7 +32,7 @@ class DataBaseHandler:
         opcionalmente ordenada.
         """
         queryset = model_class.objects.all()
-        if dbfilter.order_by:
+        if dbfilter and dbfilter.order_by:
             queryset = DataBaseHandler.__order_by(queryset, dbfilter)
         else:
             queryset.order_by('-created_at')
@@ -38,7 +41,7 @@ class DataBaseHandler:
     @staticmethod
     def get_by_ids(
             model_class: Model, ids: List[UUID],
-            dbfilter: DBFilter
+            dbfilter: DBFilter = None
         ) -> QuerySet[Model]:
         """
         Retorna uma queryset de instâncias do modelo especificado com IDs 
@@ -59,18 +62,23 @@ class DataBaseHandler:
         opcionalmente ordenada.
         """
         queryset = model_class.objects.filter(id__in=ids)
-        if dbfilter.order_by:
+        if dbfilter and dbfilter.order_by:
             queryset = DataBaseHandler.__order_by(queryset, dbfilter)
+        else:
+            queryset.order_by('-created_at')
         return queryset
 
+            
     @staticmethod
-    def get_or_create(model_class: Model, id: UUID):
-        return model_class.objects.get_or_create(id=id)[0]
-    
-    @staticmethod
-    def create(model_class: Model, model_schema: Schema):
-        model_class.objects.create(**model_schema.model_dump())
-    
+    def try_to_create(
+        model_class: Model, 
+        model_schema: Schema
+        ) -> tuple[Model, bool]:
+        
+        return (
+            model_class.objects.get_or_create(**model_schema.model_dump())
+        )
+        
     @staticmethod
     def __order_by(queryset: QuerySet, dbfilter: DBFilter) -> QuerySet:
         """

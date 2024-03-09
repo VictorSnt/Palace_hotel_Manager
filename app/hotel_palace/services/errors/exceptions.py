@@ -5,3 +5,6 @@ class DBValidationError(ValidationError):
 
 class RoomValidationError(ValidationError):
     pass
+
+class DoesNotExistError(ValidationError):
+    pass

@@ -1,15 +1,18 @@
 from uuid import UUID
-from ninja import ModelSchema
-from ...models import Room
-from ...utils.enums.room_status import RoomStatus
+from ninja import Schema
 
-class BaseRoomSchema(ModelSchema):
-    class Config:
-        model = Room
-        model_fields = ['number', 'status', 'category']
+from ...schemas.models.category_schemas import(
+    CategoryResponseSchema
+)
 
-class RoomSchema(BaseRoomSchema):
+
+class BaseRoomSchema(Schema):
+    number: str
+    status: str
+
+class RoomOutSchema(BaseRoomSchema):
     id: UUID
+    category: CategoryResponseSchema
 
-class RoomCreationSchema(BaseRoomSchema):
-    pass
+class RoomInSchema(BaseRoomSchema):
+    category: str

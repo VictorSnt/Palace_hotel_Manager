@@ -1,5 +1,5 @@
 from ninja_extra import NinjaExtraAPI
-from .validators.exceptions import (
+from .services.errors.exceptions import (
   ValidationError ,DBValidationError, RoomValidationError)
 from .controllers.category_controller import CategoryController
 from .controllers.products_controller import ProductController

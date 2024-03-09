@@ -1,13 +1,13 @@
 from uuid import UUID
-from typing import Union, List
+from typing import List
 from ..services.errors.error_payload_generator import ErrorPayloadGenerator
-from ..validators.exceptions import ValidationError
+from ..services.errors.exceptions import ValidationError
 
 
 class IDValidator:
           
     @staticmethod
-    def is_valid_uuid(ids: List[str]) -> None:
+    def is_valid_uuid(ids: List[str], param_name='ids') -> None:
         invalid_uuids = []
         for id in ids:
             try:
@@ -23,8 +23,8 @@ class IDValidator:
                 title='Must be UUID',
                 detail='One of the arguments is invalid',
                 invalid_params=[{
-                    'name':'ids',
+                    'name': param_name,
                     'values': ', '.join(invalid_uuids), 
-                    'reason': 'the ids is not a valid UUID format',
+                    'reason': 'the id is not a valid UUID format',
                 }] 
             )
