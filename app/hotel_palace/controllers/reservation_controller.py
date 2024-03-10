@@ -1,21 +1,30 @@
+from django.http import HttpResponse
 from ninja import Query
 from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
-from ..schemas.models.reservation_schema import ReservationSchema
+from ..schemas.models.reservation_schema import (
+    ReservationInSchema, ReservationOutSchema
+)
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.reservation_service import ReservationService
 
 @api_controller('/reservation', tags=['Reservation'])
 class ReservationController:
     
-    @route.get('', response=PaginatedResponseSchema[ReservationSchema])
+    @route.get('', response=PaginatedResponseSchema[ReservationOutSchema])
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_products(self, dbfilter: Query[DBFilter]):
         return ReservationService.get_all_reservations(dbfilter)
     
-    @route.get('/{ids}', response=PaginatedResponseSchema[ReservationSchema])
+    @route.get('/{ids}', response=PaginatedResponseSchema[ReservationOutSchema])
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_products_by_id(self, ids: str, dbfilter: Query[DBFilter]):
         return ReservationService.get_reservations_by_ids(ids, dbfilter)
+
+    @route.post('')
+    def create_reservation(self, reservation: ReservationInSchema):
+        status_code = ReservationService.create_reservation(reservation)
+        return HttpResponse(status=status_code)
+    

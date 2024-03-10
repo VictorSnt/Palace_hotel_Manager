@@ -2,7 +2,7 @@ from uuid import UUID
 from ninja import Schema
 
 from ...schemas.models.category_schemas import(
-    CategoryResponseSchema
+    CategoryOutSchema
 )
 
 
@@ -12,7 +12,7 @@ class BaseRoomSchema(Schema):
 
 class RoomOutSchema(BaseRoomSchema):
     id: UUID
-    category: CategoryResponseSchema
+    category: CategoryOutSchema
 
 class RoomInSchema(BaseRoomSchema):
     category: str

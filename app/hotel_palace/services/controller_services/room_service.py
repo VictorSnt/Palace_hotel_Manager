@@ -36,8 +36,8 @@ class RoomService:
         category = DataBaseHandler.get_by_ids(Category, parsed_ids)
         DBValidator.is_valid_and_not_empty_queryset(category)
         room.category = category.first()
-        room, is_created = DataBaseHandler.try_to_create(Room, room)
-        DBValidator.is_created_or_already_exist(is_created, room)
+        room_obj, is_created = DataBaseHandler.try_to_create(Room, room)
+        DBValidator.is_created_or_already_exist(is_created, room_obj)
         status_code = 201
         return status_code
     

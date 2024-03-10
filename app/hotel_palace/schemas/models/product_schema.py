@@ -1,8 +1,13 @@
-from ninja import ModelSchema
-from ...models import Product
+from uuid import UUID
+from ninja import Schema
 
 
-class ProductsSchema(ModelSchema):
-    class Config:
-        model = Product
-        model_fields = ['id', 'description', 'price']
+class BaseProductSchema(Schema):
+    description: str
+    price: float
+
+class ProductOutSchema(BaseProductSchema):
+    id: UUID
+
+class ProductInSchema(BaseProductSchema):
+    pass
