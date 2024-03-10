@@ -7,28 +7,28 @@ from ..utils.enums.marital_status import MaritalStatus
 from ..utils.enums.gender import Gender
 
 fake = Faker('pt_BR')
+
 class CustomerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Customer
     
-    
     id = factory.LazyFunction(uuid.uuid4)
-    full_name = fake.name()
-    birth_date = fake.date_of_birth()
-    cpf = fake.cpf()
-    rg = fake.rg()
+    full_name = factory.LazyAttribute(lambda x: fake.name()[:100])
+    birth_date = factory.LazyAttribute(lambda x: fake.date_of_birth())
+    cpf = factory.LazyAttribute(lambda x: fake.cpf()[:14])
+    rg = factory.LazyAttribute(lambda x: fake.rg()[:9])
     gender = factory.Faker('random_element', elements=[gender.value for gender in Gender])
     marital_status = factory.Faker('random_element', elements=[status.value for status in MaritalStatus])
-    partner = fake.name()
-    occupation = fake.job()
-    occupation_company_name = fake.company()
-    zip_code = fake.postcode()
-    address_street = fake.street_name()
-    address_number = fake.building_number()
-    address_ref = fake.random_int(min=1, max=999)
-    address_district = fake.neighborhood()
-    address_city = fake.city()
+    partner = factory.LazyAttribute(lambda x: fake.name()[:100])
+    occupation = factory.LazyAttribute(lambda x: fake.job()[:25])
+    occupation_company_name = factory.LazyAttribute(lambda x: fake.company()[:25])
+    zip_code = factory.LazyAttribute(lambda x: fake.postcode()[:25])
+    address_street = factory.LazyAttribute(lambda x: fake.street_name()[:50])
+    address_number = factory.LazyAttribute(lambda x: fake.building_number()[:6])
+    address_ref = factory.LazyAttribute(lambda x: str(fake.random_int(min=1, max=999))[:25])
+    address_district = factory.LazyAttribute(lambda x: fake.neighborhood()[:50])
+    address_city = factory.LazyAttribute(lambda x: fake.city()[:20])
     address_uf = factory.Faker('random_element', elements=[state.value for state in BrazilianStates])
-    phone = fake.phone_number()
-    cellphone = fake.phone_number()
-    email = fake.email()
+    phone = factory.LazyAttribute(lambda x: fake.phone_number()[:21])
+    cellphone = factory.LazyAttribute(lambda x: fake.phone_number()[:21])
+    email = factory.LazyAttribute(lambda x: fake.email()[:254])

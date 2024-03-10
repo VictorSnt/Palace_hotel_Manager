@@ -7,18 +7,18 @@ from ..services.errors.exceptions import ValidationError
 class EnumValidator:
     
     @staticmethod
-    def validate_enum(enum: Enum, value: str, parram_name: str):
+    def validate_enum(enum: Enum, value: str, param_name: str):
         if not value in [e.name for e in enum]:
             ErrorPayloadGenerator.generate_error_payload(
                 exc=ValidationError,
                 status_code=422,
                 type='NotValidParam',
                 title='One or more the arguments is invalid',
-                detail=f'{parram_name} must be a valid value',
+                detail=f'{param_name} must be a valid value',
                 invalid_params=[{
-                    'name': parram_name,
+                    'name': param_name,
                     'values': value,
-                    'reason': f'{parram_name} should be one of this values '
+                    'reason': f'{param_name} should be one of this values '
                         f'({[x.name for x in enum]})',
                 }] 
             )

@@ -122,7 +122,7 @@ class Accommodation(models.Model):
 
 class Consume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    room_reservation = models.ForeignKey(
+    accommodation = models.ForeignKey(
         Accommodation, on_delete=models.PROTECT, related_name='consumes')
     room = models.ForeignKey(Room, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)

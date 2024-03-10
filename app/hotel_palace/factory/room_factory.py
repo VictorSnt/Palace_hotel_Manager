@@ -1,6 +1,8 @@
 import factory
 from ..models import Room, Category
+from .category_factory import CategoryFactory
 from ..utils.enums.room_status import RoomStatus
+
 
 class RoomFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -8,8 +10,6 @@ class RoomFactory(factory.django.DjangoModelFactory):
 
     number = factory.Sequence(lambda n: f'{n:03d}')
     status = factory.Iterator([s.value for s in RoomStatus])
-    category = Category.objects.get_or_create(
-        description='padrão', one_guest_price=90, two_guest_price=170, 
-        three_guest_price=250, four_guest_price=300
-    )[0]
-    
+    category = factory.LazyAttribute(
+        lambda o: Category.objects.first() or CategoryFactory()
+    )

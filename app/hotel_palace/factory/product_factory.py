@@ -7,3 +7,4 @@ class ProductFactory(factory.django.DjangoModelFactory):
     
     description = factory.Faker('word')
     price = factory.Faker('random_number', digits=3)
+    

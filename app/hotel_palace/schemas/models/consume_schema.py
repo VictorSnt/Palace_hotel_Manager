@@ -6,7 +6,7 @@ class ConsumeSchema(ModelSchema):
     class Config:
         model = Consume
         model_fields = [
-            'id', 'room_reservation', 'room',
+            'id', 'accommodation', 'room',
             'product', 'quantity', 'unit_price',
             'total'
         ]
