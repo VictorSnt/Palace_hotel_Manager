@@ -1,110 +1,43 @@
 from django.test import TestCase, Client
 
-class TestHotelServices(TestCase):
+
+class TestHotelServicesErrorStatusCode(TestCase):
     def setUp(self):
         self.client = Client()
-    
-    def test_get_rooms_when_no_data_in_database(self):
-        response = self.client.get(
-            '/api/room',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_room_by_id_when_uuid_is_invalid(self):
-        invalid_uuid = 1
-        response = self.client.get(
-            f'/api/room/{invalid_uuid}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
 
-    def test_get_categories(self):
-        response = self.client.get(
-            '/api/category',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_category_by_ids_when_ids_are_invalid(self):
-        invalid_ids = '1,2,3'
-        response = self.client.get(
-            f'/api/category/{invalid_ids}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
-        
-    def test_get_consumes(self):
-        response = self.client.get(
-            '/api/consume',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_consumes_by_ids_when_ids_are_invalid(self):
-        invalid_ids = '1,2,3'
-        response = self.client.get(
-            f'/api/consume/{invalid_ids}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
-        
-    def test_get_products(self):
-        response = self.client.get(
-            '/api/products',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_products_by_ids_when_ids_are_invalid(self):
-        invalid_ids = '1,2,3'
-        response = self.client.get(
-            f'/api/products/{invalid_ids}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
-        
-    def test_get_customers(self):
-        response = self.client.get(
-            '/api/customer',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_customers_by_ids_when_ids_are_invalid(self):
-        invalid_ids = '1,2,3'
-        response = self.client.get(
-            f'/api/customer/{invalid_ids}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
-    
-    def test_get_accommodations(self):
-        response = self.client.get(
-            '/api/accommodation',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_accommodations_by_ids_when_ids_are_invalid(self):
-        invalid_ids = '1,2,3'
-        response = self.client.get(
-            f'/api/accommodation/{invalid_ids}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
-        
-    def test_get_reservations(self):
-        response = self.client.get(
-            '/api/reservation',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 404)
-        
-    def test_get_reservations_by_ids_when_ids_are_invalid(self):
-        invalid_ids = '1,2,3'
-        response = self.client.get(
-            f'/api/reservation/{invalid_ids}',
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 422)
+    def _send_get_request(self, url):
+        """
+        Helper method to send a GET request and return the response.
+        """
+        return self.client.get(url, content_type='application/json')
+
+    def test_all_get_endpoints(self):
+        # Give
+        """
+        Given a scenario where the database query retuned nothing or
+        the given id is a invalid uuid
+        """
+        # Arrange
+        arrange_list = [
+        ('/api/room', 404), # no results
+        ('/api/room/1', 422), # wrong uuid
+        ('/api/category', 404), # no results
+        ('/api/category/1,2,3', 422), # wrong uuid
+        ('/api/consume', 404), # no results
+        ('/api/consume/1,2,3', 422), # wrong uuid
+        ('/api/products', 404), # no results
+        ('/api/products/1,2,3', 422), # wrong uuid
+        ('/api/customer', 404), # no results
+        ('/api/customer/1,2,3', 422), # wrong uuid
+        ('/api/accommodation', 404), # no results
+        ('/api/accommodation/1,2,3', 422), # wrong uuid
+        ('/api/reservation', 404), # no results
+        ('/api/reservation/1,2,3', 422), # wrong uuid
+        ] 
+        # Act
+        for arrange in arrange_list:
+            url, expected_status_code = arrange
+            response = self._send_get_request(url)
+            
+            # Assert
+            self.assertEqual(response.status_code, expected_status_code)
