@@ -1,24 +1,10 @@
-from ninja import ModelSchema
-from ...models import Customer
-
-class CustomerSchema(ModelSchema):
-    class Config:
-        model = Customer
-        model_fields = [
-            "id", "full_name", "birth_date", "cpf",
-            "rg", "gender", "marital_status",
-            "partner", "occupation", "occupation_company_name",
-            "zip_code", "address_street", "address_number",
-            "address_ref", "address_district", "address_city",
-            "address_uf", "phone", "cellphone", "email",
-        ]
-
+from datetime import date
 from uuid import UUID
 from ninja import Schema
 
-class BaseRoomSchema(Schema):
+class BaseCustomerSchema(Schema):
     full_name: str
-    birth_date: str
+    birth_date: date
     cpf: str
     rg: str
     gender: str
@@ -37,11 +23,9 @@ class BaseRoomSchema(Schema):
     cellphone: str
     email: str
     
-    
-    
 
-class RoomOutSchema(BaseRoomSchema):
+class CustomerOutSchema(BaseCustomerSchema):
     id: UUID
 
-class RoomInSchema(BaseRoomSchema):
-    category: str
+class CustomerInSchema(BaseCustomerSchema):
+    pass
