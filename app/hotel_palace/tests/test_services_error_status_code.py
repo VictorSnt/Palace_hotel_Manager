@@ -25,8 +25,8 @@ class TestHotelServicesErrorStatusCode(TestCase):
         ('/api/category/1,2,3', 422), # wrong uuid
         ('/api/consume', 404), # no results
         ('/api/consume/1,2,3', 422), # wrong uuid
-        ('/api/products', 404), # no results
-        ('/api/products/1,2,3', 422), # wrong uuid
+        ('/api/product', 404), # no results
+        ('/api/product/1,2,3', 422), # wrong uuid
         ('/api/customer', 404), # no results
         ('/api/customer/1,2,3', 422), # wrong uuid
         ('/api/accommodation', 404), # no results

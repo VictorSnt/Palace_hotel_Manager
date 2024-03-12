@@ -31,12 +31,12 @@ class DataBaseHandler:
         Uma queryset contendo todas as instâncias do modelo,
         opcionalmente ordenada.
         """
+        key = '-created_at' #padrão
         queryset = model_class.objects.all()
         if dbfilter and dbfilter.order_by:
-            queryset = DataBaseHandler.__order_by(queryset, dbfilter)
-        else:
-            queryset.order_by('-created_at')
-        return queryset
+            key = DataBaseHandler.__order_by(queryset, dbfilter)
+        
+        return queryset.order_by(key)
 
     @staticmethod
     def get_by_ids(
@@ -61,22 +61,23 @@ class DataBaseHandler:
         Uma queryset contendo todas as instâncias do modelo,
         opcionalmente ordenada.
         """
+        key = '-created_at' #padrão
         queryset = model_class.objects.filter(id__in=ids)
         if dbfilter and dbfilter.order_by:
-            queryset = DataBaseHandler.__order_by(queryset, dbfilter)
-        else:
-            queryset.order_by('-created_at')
-        return queryset
+            key = DataBaseHandler.__order_by(queryset, dbfilter)
+        
+            
+        return queryset.order_by(key)
 
             
     @staticmethod
     def try_to_create(
         model_class: Model, 
-        model_schema: Schema
+        model_schema: dict
         ) -> tuple[Model, bool]:
         
         return (
-            model_class.objects.get_or_create(**model_schema.model_dump())
+            model_class.objects.get_or_create(**model_schema)
         )
         
     @staticmethod
@@ -95,4 +96,4 @@ class DataBaseHandler:
         """
         key = dbfilter.order_by
         ascending = dbfilter.ascending
-        return queryset.order_by(key if ascending else f'-{key}')
+        return key if ascending else f'-{key}'

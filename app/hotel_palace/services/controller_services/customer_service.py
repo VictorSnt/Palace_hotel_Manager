@@ -20,6 +20,7 @@ class CustomerService:
         dbfilter: DBFilter
         ) -> List[CustomerOutSchema]:
         
+        DBValidator.is_valid_db_field(Customer, dbfilter.order_by)  
         customers = DataBaseHandler.get_all(Customer, dbfilter)
         DBValidator.is_valid_and_not_empty_queryset(customers)
         return customers
@@ -29,6 +30,7 @@ class CustomerService:
         ids: str, dbfilter: DBFilter
         ) -> List[CustomerOutSchema]:
         
+        DBValidator.is_valid_db_field(Customer, dbfilter.order_by)  
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         customers = DataBaseHandler.get_by_ids(Customer, parsed_ids, dbfilter)
@@ -46,7 +48,7 @@ class CustomerService:
             MaritalStatus, marital_status, 'marital_status'
         )
         customer_obj, is_created = DataBaseHandler.try_to_create(
-            Customer, customer
+            Customer, customer.model_dump()
         )
         DBValidator.is_created_or_already_exist(is_created, customer_obj)
         status_code = 201

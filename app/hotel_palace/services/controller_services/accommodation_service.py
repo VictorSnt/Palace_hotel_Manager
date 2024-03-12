@@ -15,7 +15,7 @@ class AccommodationService:
     @staticmethod
     def get_all_accommodations(
         dbfilter: DBFilter) -> List[AccommodationOutSchema]:
-        
+        DBValidator.is_valid_db_field(Accommodation, dbfilter.order_by)  
         accommodations = DataBaseHandler.get_all(Accommodation, dbfilter)
         DBValidator.is_valid_and_not_empty_queryset(accommodations)
         return accommodations
@@ -23,7 +23,7 @@ class AccommodationService:
     @staticmethod
     def get_accommodations_by_ids(
         ids: str, dbfilter: DBFilter) -> List[AccommodationOutSchema]:
-        
+        DBValidator.is_valid_db_field(Accommodation, dbfilter.order_by)  
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         
@@ -39,17 +39,18 @@ class AccommodationService:
             ('room', Room), 
             ('customer', Customer)
         ]
+        accommodations_dict = accommodation.model_dump()
         for attribute, model in foreing_keys:
             parsed_id = IDParser.paser_ids_by_comma(
-                getattr(accommodation, attribute)
+                accommodations_dict[attribute]
             )
             IDValidator.is_valid_uuid(parsed_id, param_name=attribute)
             obj = DataBaseHandler.get_by_ids(model, parsed_id)
             DBValidator.is_valid_and_not_empty_queryset(obj)
-            setattr(accommodation, attribute, obj.first())
+            accommodations_dict[attribute] = obj.first()
 
         accommodation_obj, is_created = DataBaseHandler.try_to_create(
-            Accommodation, accommodation
+            Accommodation, accommodations_dict
         )
         DBValidator.is_created_or_already_exist(is_created, accommodation_obj)
         return 201

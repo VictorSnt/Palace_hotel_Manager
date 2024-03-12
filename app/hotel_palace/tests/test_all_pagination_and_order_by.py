@@ -11,17 +11,9 @@ class RoomPaginationAndSortingTest(TestCase):
         Setup the test environment.
         """
         self.client = Client()
-        # Define the expected number of records in the database
         self.expected_rows_count = 15
         self.seed_database(self.expected_rows_count)
-        
-    def test_pagination_and_ordering(self):
-        """
-        Test pagination and ordering for different API endpoints.
-        """
-        # Define test cases for different endpoints, page sizes,
-        # ordering fields, and ordering directions.
-        test_cases = [
+        self.test_cases = [
             ('/api/room', 5, 'number', True),
             ('/api/room', 5, 'number', False),
             ('/api/category', 5, 'description', True),
@@ -35,9 +27,18 @@ class RoomPaginationAndSortingTest(TestCase):
             ('/api/reservation', 5, 'customer_name', True),
             ('/api/reservation', 5, 'customer_name', False),
         ]
+        
+        
+    def test_pagination_and_ordering(self):
+        """
+        Test pagination and ordering for different API endpoints.
+        """
+        # Define test cases for different endpoints, page sizes,
+        # ordering fields, and ordering directions.
+        
 
         # Iterate over each test case.
-        for url, page_size, order_by, ascending in test_cases:
+        for url, page_size, order_by, ascending in self.test_cases:
             with self.subTest(
                 url=url, page_size=page_size, order_by=order_by, 
                 ascending=ascending):

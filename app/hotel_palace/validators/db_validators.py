@@ -18,6 +18,7 @@ class DBValidator:
                 title='Empty queryset',
                 detail='No data returned from your query'
             )
+    
     def is_created_or_already_exist(is_created: bool, obj: Model) -> None:  
         
         if not is_created:
@@ -41,5 +42,22 @@ class DBValidator:
                 invalid_params=invalid_params
             )
            
+    def is_valid_db_field(model: Model, field: str):
+        if not field:
+            return
+        existent_fields = [str(field.name) for field in model._meta.fields]
+        if not field in existent_fields:
+            invalid_params = {
+                'name': field,
+                'order_by_options': existent_fields
+            }
+            ErrorPayloadGenerator.generate_error_payload(
+                exc=DBValidationError,
+                status_code=422,
+                type='FieldDoesNotExist',
+                title=f'The field "{field}" dont exist',
+                detail='You tried to order by a inexistent field',
+                invalid_params=invalid_params
+            )
                 
             

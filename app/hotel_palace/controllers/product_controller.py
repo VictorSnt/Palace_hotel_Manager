@@ -10,7 +10,7 @@ from ..schemas.models.product_schema import (
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.product_service import ProductService
 
-@api_controller('/products', tags=['Products'])
+@api_controller('/product', tags=['Products'])
 class ProductController:
     
     @route.get('', response=PaginatedResponseSchema[ProductOutSchema])

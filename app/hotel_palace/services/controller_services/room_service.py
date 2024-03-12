@@ -14,12 +14,14 @@ class RoomService:
     
     @staticmethod
     def get_all_rooms(dbfilter: DBFilter) -> List[RoomOutSchema]:
+        DBValidator.is_valid_db_field(Room, dbfilter.order_by)  
         rooms = DataBaseHandler.get_all(Room, dbfilter)
         DBValidator.is_valid_and_not_empty_queryset(rooms)
         return rooms
     
     @staticmethod
     def get_rooms_by_ids(ids: str, dbfilter: DBFilter) -> List[RoomOutSchema]:
+        DBValidator.is_valid_db_field(Room, dbfilter.order_by)  
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         rooms = DataBaseHandler.get_by_ids(Room, parsed_ids, dbfilter)
@@ -35,8 +37,9 @@ class RoomService:
         IDValidator.is_valid_uuid(parsed_ids, param_name='category')
         category = DataBaseHandler.get_by_ids(Category, parsed_ids)
         DBValidator.is_valid_and_not_empty_queryset(category)
-        room.category = category.first()
-        room_obj, is_created = DataBaseHandler.try_to_create(Room, room)
+        room_dict = room.model_dump()
+        room_dict['category'] = category.first()
+        room_obj, is_created = DataBaseHandler.try_to_create(Room, room_dict)
         DBValidator.is_created_or_already_exist(is_created, room_obj)
         status_code = 201
         return status_code

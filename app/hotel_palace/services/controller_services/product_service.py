@@ -13,12 +13,14 @@ class ProductService:
     
     @staticmethod
     def get_all_products(dbfilter: DBFilter) -> List[ProductOutSchema]:
+        DBValidator.is_valid_db_field(Product, dbfilter.order_by)  
         products = DataBaseHandler.get_all(Product, dbfilter)
         DBValidator.is_valid_and_not_empty_queryset(products)
         return products
     
     @staticmethod
     def get_products_by_ids(ids: str, dbfilter: DBFilter) -> List[ProductOutSchema]:
+        DBValidator.is_valid_db_field(Product, dbfilter.order_by)  
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         products = DataBaseHandler.get_by_ids(Product, parsed_ids, dbfilter)
@@ -28,7 +30,7 @@ class ProductService:
     @staticmethod
     def create_product(product: ProductInSchema) -> int:
         product_obj, is_created = DataBaseHandler.try_to_create(
-            Product, product
+            Product, product.model_dump()
         )
         DBValidator.is_created_or_already_exist(is_created, product_obj)
         status_code = 201

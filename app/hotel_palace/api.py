@@ -2,7 +2,7 @@ from ninja_extra import NinjaExtraAPI
 from .services.errors.exceptions import (
   ValidationError ,DBValidationError, RoomValidationError)
 from .controllers.category_controller import CategoryController
-from .controllers.products_controller import ProductController
+from .controllers.product_controller import ProductController
 from .controllers.customer_controller import CustomerController
 from .controllers.room_controller import RoomController
 from .controllers.accommodation_controller import AccommodationController
