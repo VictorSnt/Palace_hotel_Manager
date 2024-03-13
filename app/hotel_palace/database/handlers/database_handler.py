@@ -1,9 +1,8 @@
 from django.db.models.query import QuerySet
 from django.db.models import Model
+
 from typing import List
 from uuid import UUID
-
-from ninja import Schema
 
 from ...schemas.query_strings.database_filter import DBFilter
 
@@ -76,9 +75,7 @@ class DataBaseHandler:
         model_schema: dict
         ) -> tuple[Model, bool]:
         
-        return (
-            model_class.objects.get_or_create(**model_schema)
-        )
+        return model_class.objects.get_or_create(**model_schema)
         
     @staticmethod
     def __order_by(queryset: QuerySet, dbfilter: DBFilter) -> QuerySet:

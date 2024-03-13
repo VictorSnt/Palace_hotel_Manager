@@ -11,12 +11,19 @@ class DBValidator:
     @staticmethod
     def is_valid_and_not_empty_queryset(queryset: QuerySet):
         if not queryset.exists():
-            ErrorPayloadGenerator.generate_error_payload(
+            invalid_params = [
+                {
+                    'name': 'ids',
+                    'reason': 'No data found with this pk'
+                }
+            ]
+            ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=DBValidationError,
                 status_code=404,
                 type='NotFoundOnDbError',
                 title='Empty queryset',
-                detail='No data returned from your query'
+                detail='No data returned from your query',
+                invalid_params=invalid_params
             )
     
     def is_created_or_already_exist(is_created: bool, obj: Model) -> None:  
@@ -28,11 +35,11 @@ class DBValidator:
             obj_dict = model_to_dict(obj, unique_fields)
             invalid_params = [
                 {
-                    'obj_unique_fields': obj_dict,
-                    'reason': 'you cant use the( keys, values) above'
+                    'name': obj.__class__.__name__,
+                    'reason': f'you cant use the({obj_dict}) it must be unique'
                 }
             ]
-            ErrorPayloadGenerator.generate_error_payload(
+            ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=DBValidationError,
                 status_code=409,
                 type='ObjectAlreadyExist',
@@ -49,13 +56,13 @@ class DBValidator:
         if not field in existent_fields:
             invalid_params = {
                 'name': field,
-                'order_by_options': existent_fields
+                'reason': f'the avaliable fields are: {existent_fields}'
             }
-            ErrorPayloadGenerator.generate_error_payload(
+            ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=DBValidationError,
                 status_code=422,
                 type='FieldDoesNotExist',
-                title=f'The field "{field}" dont exist',
+                title=f'The field ({field}) dont exist',
                 detail='You tried to order by a inexistent field',
                 invalid_params=invalid_params
             )

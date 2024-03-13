@@ -11,23 +11,35 @@ from ..schemas.models.accomodation_schema import (
 from ..services.controller_services.accommodation_service import (
     AccommodationService
 )
+from ..schemas.reponses.error_schemas import ErrorDetailed
+from ..schemas.reponses.success_schemas import SuccessDetailed
 
-
-PaginatedAccommodations = PaginatedResponseSchema[AccommodationOutSchema]
 @api_controller('/accommodation', tags=['Accommodations'])
 class AccommodationController:
     
-    @route.get('', response=PaginatedAccommodations)
+    get_method_responses = {
+        200: PaginatedResponseSchema[AccommodationOutSchema],
+        404: ErrorDetailed,
+        422: ErrorDetailed
+    }
+    post_method_responses = {
+        201: SuccessDetailed,
+        409: ErrorDetailed,
+        422: ErrorDetailed
+    }
+    
+    
+    @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_customers(self, dbfilter: Query[DBFilter]):
+    def get_accommodations(self, dbfilter: Query[DBFilter]):
         return AccommodationService.get_all_accommodations(dbfilter)
     
-    @route.get('/{ids}', response=PaginatedAccommodations)
+    @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_customers_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+    def get_accommodations_by_id(self, ids: str, dbfilter: Query[DBFilter]):
         return AccommodationService.get_accommodations_by_ids(ids, dbfilter)
-
-    @route.post('')
+    
+    @route.post('', response=post_method_responses)
     def create_accommodation(self, accommodation: AccommodationInSchema):
         status_code = AccommodationService.create_accommodation(accommodation)
         return HttpResponse(status=status_code)

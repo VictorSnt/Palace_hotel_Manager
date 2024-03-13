@@ -16,7 +16,7 @@ class IDValidator:
                 invalid_uuids.append(id)
 
         if invalid_uuids: 
-            ErrorPayloadGenerator.generate_error_payload(
+            ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=ValidationError,
                 status_code=422,
                 type='NotValidUUID',
@@ -24,7 +24,7 @@ class IDValidator:
                 detail='One of the arguments is invalid',
                 invalid_params=[{
                     'name': param_name,
-                    'values': ', '.join(invalid_uuids), 
-                    'reason': 'the id is not a valid UUID format',
+                    'reason': f'the ids ({", ".join(invalid_uuids)}) '
+                    'is not a valid UUID format',
                 }] 
             )

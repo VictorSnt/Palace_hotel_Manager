@@ -3,7 +3,7 @@ import json
 from django.test import Client, TestCase
 
 
-class TestServicesCreationRoutes(TestCase):
+class TestServicesPOSTRoutes(TestCase):
     
     def setUp(self) -> None:
         """
@@ -91,24 +91,17 @@ class TestServicesCreationRoutes(TestCase):
             ),
         ]
     
-    
     def test_objects_creation_when_its_all_right(self):
-        
-        for case in self.test_cases:
-            
-            url: str = case[0]
-            json_dict: dict = case[1]
-            if 'uuid' in json_dict.values():
-                params = [
-                    key for key, value in json_dict.items() 
-                    if value == 'uuid'
-                ]
-                for param in params:
-                    json_dict[param] = self._get_object_uuid(param)
+        for url, json_dict in self.test_cases:
+            self._replace_uuid_with_object_id(json_dict)
             response = self.client.post(url, json_dict, 'application/json')
-            #input(response.content)
             self.assertEqual(response.status_code, 201)
     
-    def _get_object_uuid(self, param: str):
+    def _replace_uuid_with_object_id(self, json_dict):
+        for key, value in json_dict.items():
+            if value == 'uuid':
+                json_dict[key] = self._get_object_uuid(key)
+    
+    def _get_object_uuid(self, param):
         response = self.client.get(f'/api/{param}')
         return response.json()['results'][0]['id']

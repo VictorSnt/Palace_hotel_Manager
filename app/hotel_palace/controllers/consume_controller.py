@@ -9,22 +9,35 @@ from ..schemas.models.consume_schema import (
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.consume_service import ConsumeService
-
+from ..schemas.reponses.error_schemas import ErrorDetailed
+from ..schemas.reponses.success_schemas import SuccessDetailed
 
 @api_controller('/consume', tags=['Consumes'])
 class ConsumeController:
     
-    @route.get('', response=PaginatedResponseSchema[ConsumeOutSchema])
+    get_method_responses = {
+        200: PaginatedResponseSchema[ConsumeOutSchema],
+        404: ErrorDetailed,
+        422: ErrorDetailed
+    }
+    post_method_responses = {
+        201: SuccessDetailed,
+        409: ErrorDetailed,
+        422: ErrorDetailed
+    }
+    
+    
+    @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_products(self, dbfilter: Query[DBFilter]):
+    def get_consumes(self, dbfilter: Query[DBFilter]):
         return ConsumeService.get_all_consumes(dbfilter)
     
-    @route.get('/{ids}', response=PaginatedResponseSchema[ConsumeOutSchema])
+    @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_products_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+    def get_consumes_by_id(self, ids: str, dbfilter: Query[DBFilter]):
         return ConsumeService.get_consumes_by_ids(ids, dbfilter)
     
-    @route.post('')
+    @route.post('', response=post_method_responses)
     def create_consume(self, consume: ConsumeInSchema):
         status_code = ConsumeService.create_consume(consume)
         return HttpResponse(status=status_code)

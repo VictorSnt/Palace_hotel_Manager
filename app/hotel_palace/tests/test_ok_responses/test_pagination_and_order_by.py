@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from ..factory import factories as db_factory
+from ...factory import factories as db_factory
 
 class RoomPaginationAndSortingTest(TestCase):
     """
