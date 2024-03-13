@@ -41,5 +41,5 @@ class CustomerController:
 
     @route.post('', response=post_method_responses)
     def create_customer(self, customer: CustomerInSchema):
-        status_code = CustomerService.create_customer(customer)
-        return HttpResponse(status=status_code)
+        CustomerService.create_customer(customer)
+        return 201, {'message': 'Criado com sucesso'}

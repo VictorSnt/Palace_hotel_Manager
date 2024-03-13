@@ -39,5 +39,5 @@ class ConsumeController:
     
     @route.post('', response=post_method_responses)
     def create_consume(self, consume: ConsumeInSchema):
-        status_code = ConsumeService.create_consume(consume)
-        return HttpResponse(status=status_code)
+        ConsumeService.create_consume(consume)
+        return 201, {'message': 'Criado com sucesso'}

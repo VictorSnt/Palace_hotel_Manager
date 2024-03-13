@@ -41,5 +41,5 @@ class ProductController:
 
     @route.post('', response=post_method_responses)
     def create_product(self, product: ProductInSchema):
-        status_code = ProductService.create_product(product)
-        return HttpResponse(status=status_code)
+        ProductService.create_product(product)
+        return 201, {'message': 'Criado com sucesso'}

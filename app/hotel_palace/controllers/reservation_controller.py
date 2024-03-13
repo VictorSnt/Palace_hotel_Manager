@@ -39,5 +39,6 @@ class ReservationController:
 
     @route.post('', response=post_method_responses)
     def create_reservation(self, reservation: ReservationInSchema):
-        status_code = ReservationService.create_reservation(reservation)
-        return HttpResponse(status=status_code)
+        ReservationService.create_reservation(reservation)
+        return 201, {'message': 'Criado com sucesso'}
+        

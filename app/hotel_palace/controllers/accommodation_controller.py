@@ -41,5 +41,5 @@ class AccommodationController:
     
     @route.post('', response=post_method_responses)
     def create_accommodation(self, accommodation: AccommodationInSchema):
-        status_code = AccommodationService.create_accommodation(accommodation)
-        return HttpResponse(status=status_code)
+        AccommodationService.create_accommodation(accommodation)
+        return 201, {'message': 'Criado com sucesso'}

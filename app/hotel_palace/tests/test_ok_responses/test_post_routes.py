@@ -1,6 +1,5 @@
-import datetime
-import json
 from django.test import Client, TestCase
+from ...schemas.reponses.error_schemas import ErrorDetailed
 
 
 class TestServicesPOSTRoutes(TestCase):
@@ -10,6 +9,7 @@ class TestServicesPOSTRoutes(TestCase):
         Setup the test environment.
         """
         self.client = Client()
+        self.error_schema = ErrorDetailed
         self.test_cases = [
             ('/api/category/', 
                 {  
@@ -30,7 +30,7 @@ class TestServicesPOSTRoutes(TestCase):
             ('/api/customer',
                 {
                     "full_name": "string",
-                    "birth_date": datetime.date(2000,3,30),
+                    "birth_date": "2000-03-11",
                     "cpf": "string",
                     "rg": "string",
                     "gender": "MALE",
@@ -91,11 +91,32 @@ class TestServicesPOSTRoutes(TestCase):
             ),
         ]
     
-    def test_objects_creation_when_its_all_right(self):
+    def test_objects_creation_when_its_all_right_and_conflict(self):
+        self._create_test_objects()
+        self._test_conflict_error_payload()
+    
+    
+    def _create_test_objects(self):
         for url, json_dict in self.test_cases:
             self._replace_uuid_with_object_id(json_dict)
             response = self.client.post(url, json_dict, 'application/json')
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(
+                response.status_code, 201, 
+                f"Failed to create object for URL: {url}"
+            )
+            
+    def _test_conflict_error_payload(self):
+        for url, json_dict in self.test_cases:
+            self._replace_uuid_with_object_id(json_dict)
+            response = self.client.post(url, json_dict, 'application/json')
+            self.assertEqual(
+                response.status_code, 409, 
+                f"Expected status code 409 for URL: {url}"
+            )
+            self.assertTrue(
+                self.error_schema(**response.json()), 
+                f"Invalid error payload for URL: {url}"
+            )
     
     def _replace_uuid_with_object_id(self, json_dict):
         for key, value in json_dict.items():

@@ -9,6 +9,7 @@ from ..schemas.reponses.error_schemas import ErrorDetailed
 from ..schemas.reponses.success_schemas import SuccessDetailed
 from ..schemas.query_strings.database_filter import DBFilter
 
+
 @api_controller('/room', tags=['Room'])
 class RoomController:
     
@@ -39,4 +40,4 @@ class RoomController:
     @route.post('', response=post_method_responses)
     def create_room(self, room: RoomInSchema):
         RoomService.create_room(room=room)
-        return {'message': 'Criado com sucesso'}
+        return 201, {'message': 'Criado com sucesso'}

@@ -41,5 +41,5 @@ class CategoryController:
 
     @route.post('/', response=post_method_responses)
     def create_category(self, category: CategoryInSchema):
-        status_code = CategoryService.create_category(category)
-        return HttpResponse(status=status_code)
+        CategoryService.create_category(category)
+        return 201, {'message': 'Criado com sucesso'}
