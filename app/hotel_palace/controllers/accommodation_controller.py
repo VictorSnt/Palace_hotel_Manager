@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from ninja import Query
 from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
@@ -31,15 +30,14 @@ class AccommodationController:
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_accommodations(self, dbfilter: Query[DBFilter]):
-        return AccommodationService.get_all_accommodations(dbfilter)
+    def get(self, dbfilter: Query[DBFilter]):
+        return AccommodationService.get_all(dbfilter)
     
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_accommodations_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return AccommodationService.get_accommodations_by_ids(ids, dbfilter)
+    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+        return AccommodationService.get_by_ids(ids, dbfilter)
     
     @route.post('', response=post_method_responses)
-    def create_accommodation(self, accommodation: AccommodationInSchema):
-        AccommodationService.create_accommodation(accommodation)
-        return 201, {'message': 'Criado com sucesso'}
+    def create(self, accommodation: AccommodationInSchema):
+        return AccommodationService.create(accommodation)

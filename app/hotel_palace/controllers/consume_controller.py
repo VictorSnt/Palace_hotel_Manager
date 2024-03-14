@@ -29,15 +29,15 @@ class ConsumeController:
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_consumes(self, dbfilter: Query[DBFilter]):
-        return ConsumeService.get_all_consumes(dbfilter)
+    def get(self, dbfilter: Query[DBFilter]):
+        return ConsumeService.get_all(dbfilter)
     
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_consumes_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ConsumeService.get_consumes_by_ids(ids, dbfilter)
+    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+        return ConsumeService.get_by_ids(ids, dbfilter)
     
     @route.post('', response=post_method_responses)
-    def create_consume(self, consume: ConsumeInSchema):
-        ConsumeService.create_consume(consume)
-        return 201, {'message': 'Criado com sucesso'}
+    def create(self, consume: ConsumeInSchema):
+        return ConsumeService.create(consume)
+        

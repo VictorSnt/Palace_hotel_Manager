@@ -3,6 +3,7 @@ from ...database.handlers.database_handler import DataBaseHandler
 from ...models import Room, Category
 from ...schemas.models.room_schemas import RoomInSchema, RoomOutSchema
 from ...schemas.query_strings.database_filter import DBFilter
+from ...schemas.reponses.success_schemas import SuccessDetailed
 from ...validators.id_validator import IDValidator
 from ...validators.db_validators import DBValidator
 from ...validators.enum_validator import EnumValidator
@@ -12,15 +13,18 @@ from ...utils.enums.room_status import RoomStatus
 
 class RoomService:
     
+    RoomList = List[RoomOutSchema]
+    Success201  = tuple[int, SuccessDetailed]
+    
     @staticmethod
-    def get_all_rooms(dbfilter: DBFilter) -> List[RoomOutSchema]:
+    def get_all_rooms(dbfilter: DBFilter) -> RoomList:
         DBValidator.is_valid_db_field(Room, dbfilter.order_by)  
         rooms = DataBaseHandler.get_all(Room, dbfilter)
         DBValidator.is_valid_and_not_empty_queryset(rooms)
         return rooms
     
     @staticmethod
-    def get_rooms_by_ids(ids: str, dbfilter: DBFilter) -> List[RoomOutSchema]:
+    def get_rooms_by_ids(ids: str, dbfilter: DBFilter) -> RoomList:
         DBValidator.is_valid_db_field(Room, dbfilter.order_by)  
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
@@ -29,7 +33,7 @@ class RoomService:
         return rooms
     
     @staticmethod
-    def create_room(room: RoomInSchema) -> int:
+    def create_room(room: RoomInSchema) -> Success201:
         status = room.status
         category_id = room.category
         EnumValidator.validate_enum(RoomStatus, status, 'status')
@@ -41,6 +45,5 @@ class RoomService:
         room_dict['category'] = category.first()
         room_obj, is_created = DataBaseHandler.try_to_create(Room, room_dict)
         DBValidator.is_created_or_already_exist(is_created, room_obj)
-        status_code = 201
-        return status_code
+        return 201, {'message': 'Criado com sucesso'}
     

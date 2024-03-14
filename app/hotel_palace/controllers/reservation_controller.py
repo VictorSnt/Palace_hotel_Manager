@@ -30,15 +30,14 @@ class ReservationController:
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_reservations(self, dbfilter: Query[DBFilter]):
-        return ReservationService.get_all_reservations(dbfilter)
+        return ReservationService.get_all(dbfilter)
     
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_reservations_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ReservationService.get_reservations_by_ids(ids, dbfilter)
+        return ReservationService.get_by_ids(ids, dbfilter)
 
     @route.post('', response=post_method_responses)
-    def create_reservation(self, reservation: ReservationInSchema):
-        ReservationService.create_reservation(reservation)
-        return 201, {'message': 'Criado com sucesso'}
+    def create(self, reservation: ReservationInSchema):
+        return ReservationService.create(reservation)
         

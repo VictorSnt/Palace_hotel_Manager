@@ -8,6 +8,7 @@ from ...utils.enums.marital_status import MaritalStatus
 from ...utils.enums.brazilian_states import BrazilianStates
 from ...utils.enums.gender import Gender
 from ...schemas.query_strings.database_filter import DBFilter
+from ...schemas.reponses.success_schemas import SuccessDetailed
 from ...validators.id_validator import IDValidator
 from ...validators.db_validators import DBValidator
 from ...validators.enum_validator import EnumValidator
@@ -15,10 +16,11 @@ from ...services.trasformators.parsers import IDParser
 
 class CustomerService:
     
+    CostumerList = List[CustomerOutSchema]
+    Success201  = tuple[int, SuccessDetailed]
+    
     @staticmethod
-    def get_all_customers(
-        dbfilter: DBFilter
-        ) -> List[CustomerOutSchema]:
+    def get_all(dbfilter: DBFilter) -> CostumerList:
         
         DBValidator.is_valid_db_field(Customer, dbfilter.order_by)  
         customers = DataBaseHandler.get_all(Customer, dbfilter)
@@ -26,9 +28,7 @@ class CustomerService:
         return customers
     
     @staticmethod
-    def get_customers_by_ids(
-        ids: str, dbfilter: DBFilter
-        ) -> List[CustomerOutSchema]:
+    def get_by_ids(ids: str, dbfilter: DBFilter) -> CostumerList:
         
         DBValidator.is_valid_db_field(Customer, dbfilter.order_by)  
         parsed_ids = IDParser.paser_ids_by_comma(ids)
@@ -38,19 +38,16 @@ class CustomerService:
         return customers
     
     @staticmethod
-    def create_customer(customer: CustomerInSchema) -> int:
+    def create(customer: CustomerInSchema) -> Success201:
         gender = customer.gender
         address_uf = customer.address_uf
         marital_status = customer.marital_status
         EnumValidator.validate_enum(Gender, gender, 'gender')
         EnumValidator.validate_enum(BrazilianStates, address_uf, 'address_uf')
-        EnumValidator.validate_enum(
-            MaritalStatus, marital_status, 'marital_status'
-        )
-        customer_obj, is_created = DataBaseHandler.try_to_create(
-            Customer, customer.model_dump()
-        )
+        args = MaritalStatus, marital_status, 'marital_status'
+        EnumValidator.validate_enum(*args)
+        args = Customer, customer.model_dump()
+        customer_obj, is_created = DataBaseHandler.try_to_create(*args)
         DBValidator.is_created_or_already_exist(is_created, customer_obj)
-        status_code = 201
-        return status_code
+        return 201, {'message': 'Criado com sucesso'}
     

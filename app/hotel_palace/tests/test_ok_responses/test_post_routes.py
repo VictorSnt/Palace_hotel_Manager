@@ -11,7 +11,7 @@ class TestServicesPOSTRoutes(TestCase):
         self.client = Client()
         self.error_schema = ErrorDetailed
         self.test_cases = [
-            ('/api/category/', 
+            ('/api/category', 
                 {  
                     "description": "standard",
                     "one_guest_price": 90,

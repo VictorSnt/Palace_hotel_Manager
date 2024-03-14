@@ -31,15 +31,15 @@ class CustomerController:
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_customers(self, dbfilter: Query[DBFilter]):
-        return CustomerService.get_all_customers(dbfilter)
+    def get(self, dbfilter: Query[DBFilter]):
+        return CustomerService.get_all(dbfilter)
     
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_customers_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return CustomerService.get_customers_by_ids(ids, dbfilter)
+    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+        return CustomerService.get_by_ids(ids, dbfilter)
 
     @route.post('', response=post_method_responses)
     def create_customer(self, customer: CustomerInSchema):
-        CustomerService.create_customer(customer)
-        return 201, {'message': 'Criado com sucesso'}
+        
+        return CustomerService.create(customer) 

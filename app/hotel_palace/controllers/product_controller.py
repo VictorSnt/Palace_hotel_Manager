@@ -31,15 +31,14 @@ class ProductController:
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_products(self, dbfilter: Query[DBFilter]):
-        return ProductService.get_all_products(dbfilter)
+    def get(self, dbfilter: Query[DBFilter]):
+        return ProductService.get_all(dbfilter)
     
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_products_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ProductService.get_products_by_ids(ids, dbfilter)
+    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+        return ProductService.get_by_ids(ids, dbfilter)
 
     @route.post('', response=post_method_responses)
-    def create_product(self, product: ProductInSchema):
-        ProductService.create_product(product)
-        return 201, {'message': 'Criado com sucesso'}
+    def create(self, product: ProductInSchema):
+        return ProductService.create(product)

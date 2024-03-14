@@ -28,16 +28,14 @@ class RoomController:
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_rooms(self, dbfilter: Query[DBFilter]):
-        rooms = RoomService.get_all_rooms(dbfilter)
-        return rooms
-    
+        return RoomService.get_all_rooms(dbfilter)
+         
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_rooms_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        rooms = RoomService.get_rooms_by_ids(ids, dbfilter)
-        return rooms
-    
+        return RoomService.get_rooms_by_ids(ids, dbfilter)
+         
     @route.post('', response=post_method_responses)
     def create_room(self, room: RoomInSchema):
-        RoomService.create_room(room=room)
-        return 201, {'message': 'Criado com sucesso'}
+        return RoomService.create_room(room=room)
+         
