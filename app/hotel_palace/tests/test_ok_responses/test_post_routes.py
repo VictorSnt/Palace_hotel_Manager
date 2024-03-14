@@ -101,6 +101,7 @@ class TestServicesPOSTRoutes(TestCase):
             self._replace_uuid_with_object_id(json_dict)
             response = self.client.post(url, json_dict, 'application/json')
             self.assertEqual(
+                
                 response.status_code, 201, 
                 f"Failed to create object for URL: {url}"
             )

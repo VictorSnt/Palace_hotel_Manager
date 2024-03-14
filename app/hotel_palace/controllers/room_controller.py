@@ -27,15 +27,15 @@ class RoomController:
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_rooms(self, dbfilter: Query[DBFilter]):
-        return RoomService.get_all_rooms(dbfilter)
+    def get(self, dbfilter: Query[DBFilter]):
+        return RoomService.get_all(dbfilter)
          
     @route.get('/{ids}', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_rooms_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return RoomService.get_rooms_by_ids(ids, dbfilter)
+    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
+        return RoomService.get_by_ids(ids, dbfilter)
          
     @route.post('', response=post_method_responses)
-    def create_room(self, room: RoomInSchema):
-        return RoomService.create_room(room=room)
+    def create(self, room: RoomInSchema):
+        return RoomService.create(room=room)
          

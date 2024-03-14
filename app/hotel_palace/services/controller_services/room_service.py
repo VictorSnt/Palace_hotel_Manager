@@ -1,4 +1,6 @@
-from typing import List
+from typing import Any, List
+from django.db.models import Model
+from ninja import Schema
 from ...database.handlers.database_handler import DataBaseHandler
 from ...models import Room, Category
 from ...schemas.models.room_schemas import RoomInSchema, RoomOutSchema
@@ -17,33 +19,61 @@ class RoomService:
     Success201  = tuple[int, SuccessDetailed]
     
     @staticmethod
-    def get_all_rooms(dbfilter: DBFilter) -> RoomList:
-        DBValidator.is_valid_db_field(Room, dbfilter.order_by)  
+    def get_all(dbfilter: DBFilter) -> RoomList:
+        RoomService._validate_db_field(dbfilter)
         rooms = DataBaseHandler.get_all(Room, dbfilter)
-        DBValidator.is_valid_and_not_empty_queryset(rooms)
+        RoomService._validate_queryset(rooms)
         return rooms
     
     @staticmethod
-    def get_rooms_by_ids(ids: str, dbfilter: DBFilter) -> RoomList:
-        DBValidator.is_valid_db_field(Room, dbfilter.order_by)  
+    def get_by_ids(ids: str, dbfilter: DBFilter) -> RoomList:
+        RoomService._validate_db_field(dbfilter) 
+        ids = RoomService._validate_uuid(ids)
+        rooms = DataBaseHandler.get_by_ids(Room, ids, dbfilter)
+        RoomService._validate_queryset(rooms)
+        return rooms
+    
+    @staticmethod
+    def create(room: RoomInSchema) -> Success201:
+        RoomService._validate_enum(room.status, 'status')
+        id = RoomService._validate_uuid(room.category)
+        category = DataBaseHandler.get_by_ids(Category, id)
+        RoomService._validate_queryset(category)
+        parsed_category = RoomService._parse_schema(room, category)
+        args = Room, parsed_category
+        response = DataBaseHandler.try_to_create(*args)
+        RoomService._validate_obj_creation(response)
+        return 201, {'message': 'Criado com sucesso'}
+    
+    @staticmethod
+    def _validate_db_field(dbfilter: DBFilter) -> None:
+        DBValidator.is_valid_db_field(Room, dbfilter.order_by)
+
+    @staticmethod
+    def _validate_queryset(rooms: RoomList) -> None:
+        DBValidator.is_valid_and_not_empty_queryset(rooms)
+        
+    @staticmethod
+    def _validate_uuid(ids: str) -> str :
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
-        rooms = DataBaseHandler.get_by_ids(Room, parsed_ids, dbfilter)
-        DBValidator.is_valid_and_not_empty_queryset(rooms)
-        return rooms
+        return parsed_ids
     
     @staticmethod
-    def create_room(room: RoomInSchema) -> Success201:
-        status = room.status
-        category_id = room.category
-        EnumValidator.validate_enum(RoomStatus, status, 'status')
-        parsed_ids = IDParser.paser_ids_by_comma(category_id)
-        IDValidator.is_valid_uuid(parsed_ids, param_name='category')
-        category = DataBaseHandler.get_by_ids(Category, parsed_ids)
-        DBValidator.is_valid_and_not_empty_queryset(category)
-        room_dict = room.model_dump()
-        room_dict['category'] = category.first()
-        room_obj, is_created = DataBaseHandler.try_to_create(Room, room_dict)
+    def _validate_enum(attr: str, attr_name: str):
+        EnumValidator.validate_enum(RoomStatus, attr, attr_name)
+        
+    @staticmethod    
+    def _parse_schema(schema: Schema, *args) -> dict[str, Any]:
+        schema_dict = schema.model_dump()
+        for arg in args:
+            arg = arg.first()
+            arg_name = str(arg.__class__.__name__).lower()
+            schema_dict[arg_name] = arg
+        return schema_dict
+    
+    @staticmethod
+    def _validate_obj_creation(response: tuple[bool, Model]) -> None:
+        room_obj, is_created = response
         DBValidator.is_created_or_already_exist(is_created, room_obj)
-        return 201, {'message': 'Criado com sucesso'}
     
