@@ -6,30 +6,29 @@ from ...schemas.models.consume_schema import (
 )
 from ...schemas.reponses.success_schemas import SuccessDetailed
 from ...schemas.query_strings.database_filter import DBFilter
-from ...validators.id_validator import IDValidator
-from ...validators.db_validators import DBValidator
-from ..trasformators.parsers import IDParser
+from ...services.base_service import BaseService
 
-class ConsumeService:
+
+class ConsumeService(BaseService):
     
     ConsumeList = List[ConsumeOutSchema]
     Success201  = tuple[int, SuccessDetailed]
     
     @staticmethod
     def get_all(dbfilter: DBFilter) -> ConsumeList:
-        DBValidator.is_valid_db_field(Consume, dbfilter.order_by)  
+        ConsumeService._validate_db_field(Consume, dbfilter) 
         prod_consume = DataBaseHandler.get_all(Consume, dbfilter)
-        DBValidator.is_valid_and_not_empty_queryset(prod_consume)
+        ConsumeService._validate_queryset(prod_consume)
         return prod_consume
-    
+        
     @staticmethod
     def get_by_ids(ids: str, dbfilter: DBFilter) -> ConsumeList:
-        DBValidator.is_valid_db_field(Consume, dbfilter.order_by)  
-        parsed_ids = IDParser.paser_ids_by_comma(ids)
-        IDValidator.is_valid_uuid(parsed_ids)
-        prod_consume = DataBaseHandler.get_by_ids(Consume, parsed_ids, dbfilter)
-        DBValidator.is_valid_and_not_empty_queryset(prod_consume)
+        ConsumeService._validate_db_field(Consume, dbfilter) 
+        ids = ConsumeService._validate_n_parse_uuid(ids)
+        prod_consume = DataBaseHandler.get_by_ids(Consume, ids, dbfilter)
+        ConsumeService._validate_queryset(prod_consume)
         return prod_consume
+
     
     @staticmethod
     def create(consume: ConsumeInSchema) -> Success201:
@@ -40,13 +39,10 @@ class ConsumeService:
         ]
         consume_dict = consume.model_dump()
         for attribute, model in foreing_keys:
-            parsed_id = IDParser.paser_ids_by_comma(consume_dict[attribute])
-            IDValidator.is_valid_uuid(parsed_id, param_name=attribute)
-            obj = DataBaseHandler.get_by_ids(model, parsed_id)
-            DBValidator.is_valid_and_not_empty_queryset(obj)
+            ids = ConsumeService._validate_n_parse_uuid(consume_dict[attribute])
+            obj = DataBaseHandler.get_by_ids(model, ids)
+            ConsumeService._validate_queryset(obj)
             consume_dict[attribute] = obj.first()
-        
-        args = Consume, consume_dict
-        consume_obj, is_created = DataBaseHandler.try_to_create(*args)
-        DBValidator.is_created_or_already_exist(is_created, consume_obj)
+        response = DataBaseHandler.try_to_create(Consume, consume_dict)
+        ConsumeService._validate_obj_creation(response)
         return 201, {'message': 'Criado com sucesso'}

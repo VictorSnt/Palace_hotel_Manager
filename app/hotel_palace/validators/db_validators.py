@@ -1,7 +1,6 @@
 from django.db.models.query import QuerySet
 from django.db.models import Model
 from django.forms.models import model_to_dict
-from ninja import Schema
 from ..services.errors.exceptions import DBValidationError
 from ..services.errors.error_payload_generator import ErrorPayloadGenerator
 

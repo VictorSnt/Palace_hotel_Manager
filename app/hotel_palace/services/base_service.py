@@ -10,7 +10,6 @@ from ..validators.enum_validator import EnumValidator
 from ..services.trasformators.parsers import IDParser
 
 
-
 class BaseService:
 
     @staticmethod
@@ -22,7 +21,7 @@ class BaseService:
         DBValidator.is_valid_and_not_empty_queryset(rooms)
         
     @staticmethod
-    def _validate_uuid(ids: str) -> str :
+    def _validate_n_parse_uuid(ids: str) -> str :
         parsed_ids = IDParser.paser_ids_by_comma(ids)
         IDValidator.is_valid_uuid(parsed_ids)
         return parsed_ids
