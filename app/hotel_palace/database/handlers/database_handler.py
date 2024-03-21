@@ -33,7 +33,7 @@ class DataBaseHandler:
         key = '-created_at' #padrão
         queryset = model_class.objects.all()
         if dbfilter and dbfilter.order_by:
-            key = DataBaseHandler.__order_by(queryset, dbfilter)
+            key = DataBaseHandler.__order_by(dbfilter)
         return queryset.order_by(key)
 
     @staticmethod
@@ -62,7 +62,7 @@ class DataBaseHandler:
         key = '-created_at' #padrão
         queryset = model_class.objects.filter(id__in=ids)
         if dbfilter and dbfilter.order_by:
-            key = DataBaseHandler.__order_by(queryset, dbfilter)
+            key = DataBaseHandler.__order_by(dbfilter)
         return queryset.order_by(key)
 
             

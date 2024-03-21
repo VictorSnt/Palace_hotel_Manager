@@ -54,7 +54,7 @@ class ReservationService(BaseService):
             if reserv.room.number == room.number:
                 ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=ValidationError,
-                status_code=422,
+                status_code=409,
                 type='NotValidParams',
                 title='Reservation conflict',
                 detail='Ja existe reserva para o mesmo quarto na mesma data',

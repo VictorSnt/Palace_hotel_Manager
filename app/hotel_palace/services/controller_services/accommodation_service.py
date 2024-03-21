@@ -101,8 +101,9 @@ class AccommodationService(BaseService):
     @staticmethod
     def _validate_room(room: Room):
         last_accommodation = room.accommodations.order_by('-created_at')
-        if not last_accommodation.exists():
-            if last_accommodation.is_active or room.status != "FREE":
+        if last_accommodation.exists():
+            accommodation_obj = last_accommodation.first()
+            if accommodation_obj.is_active or room.status != "FREE":
                 ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=ValidationError,
                 status_code=400,
