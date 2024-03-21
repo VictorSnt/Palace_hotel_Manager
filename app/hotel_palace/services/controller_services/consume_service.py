@@ -54,4 +54,3 @@ class ConsumeService(BaseService):
         obj['accommodation'].total_bill = total_bill
         obj['accommodation'].save()
         
-    

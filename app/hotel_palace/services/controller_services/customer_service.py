@@ -41,16 +41,19 @@ class CustomerService(BaseService):
     @staticmethod
     def create(customer: CustomerInSchema) -> Success201:
         
-        enums_list = [
-            (Gender, customer.gender, 'gender'), 
-            (BrazilianStates, customer.address_uf, 'address_uf'), 
-            (MaritalStatus, customer.marital_status, 'marital_status')
-        ]
+        enums_list = CustomerService._get_customers_enums_list(customer)
         for enum, value, attr in enums_list:
             CustomerService._validate_enum(enum, value, attr)
-        
         args = Customer, customer.model_dump()
         response = DataBaseHandler.try_to_create(*args)
         CustomerService._validate_obj_creation(response)
         return 201, {'message': 'Criado com sucesso'}
     
+    @staticmethod
+    def _get_customers_enums_list(obj: CustomerInSchema):
+        return ([
+            (Gender, obj.gender, 'gender'), 
+            (BrazilianStates, obj.address_uf, 'address_uf'), 
+            (MaritalStatus, obj.marital_status, 'marital_status')
+        ])
+        

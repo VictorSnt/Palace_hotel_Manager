@@ -2,6 +2,7 @@ from datetime import datetime, time, timedelta
 from decimal import ROUND_UP, Decimal
 from typing import List
 
+from ...services.errors.error_payload_generator import ErrorPayloadGenerator
 from ...schemas.reponses.success_schemas import SuccessDetailed
 from ...database.handlers.database_handler import DataBaseHandler
 from ...models import Accommodation, Customer, Room
@@ -99,15 +100,13 @@ class AccommodationService(BaseService):
     
     @staticmethod
     def _validate_room(room: Room):
-        if room.status != "FREE":
-            raise ValidationError(
-                "O quarto deve estar livre para hospedar"
-                , 400
-            )
         last_accommodation = room.accommodations.order_by('-created_at')
-        if last_accommodation.exists():
-            if last_accommodation.is_active:
-                raise ValidationError(
-                    "Já existe reserva ativa no quarto"
-                    , 400
-                )
+        if not last_accommodation.exists():
+            if last_accommodation.is_active or room.status != "FREE":
+                ErrorPayloadGenerator.generate_422_error_detailed(
+                exc=ValidationError,
+                status_code=400,
+                type='NotValidParams',
+                title='Reservation conflict',
+                detail='Ja existe alguem hospedado nesse quarto',
+            )
