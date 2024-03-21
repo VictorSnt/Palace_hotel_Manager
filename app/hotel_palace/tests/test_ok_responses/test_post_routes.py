@@ -1,10 +1,13 @@
 from django.test import Client, TestCase
+
+from ...models import Accommodation, Room
 from ...schemas.reponses.error_schemas import ErrorDetailed
 
 
 class TestServicesPOSTRoutes(TestCase):
     
     def setUp(self) -> None:
+        
         """
         Setup the test environment.
         """
@@ -68,28 +71,18 @@ class TestServicesPOSTRoutes(TestCase):
                     "room": "uuid",
                     "customer": "uuid",
                     "guest_quant": 1,
-                    "is_active": True,
-                    "days_quant": 1,
                     "checkin_date": "2024-03-11",
-                    "checkout_date": "2024-03-11",
-                    "checkin_time": "23:36:15",
-                    "checkout_time": "23:36:15",
-                    "hosting_price": 150,
-                    "total_hosting_price": 150,
-                    "total_bill": 150
                 }
             ),
             ('/api/consume',
                 {
                     "accommodation": "uuid",
-                    "room": "uuid",
                     "product": "uuid",
                     "quantity": 2,
-                    "unit_price": 2,
-                    "total": 4
                 }
             ),
         ]
+        
     
     def test_objects_creation_when_its_all_right_and_conflict(self):
         self._create_test_objects()
@@ -110,15 +103,26 @@ class TestServicesPOSTRoutes(TestCase):
         for url, json_dict in self.test_cases:
             self._replace_uuid_with_object_id(json_dict)
             response = self.client.post(url, json_dict, 'application/json')
-            self.assertEqual(
-                response.status_code, 409, 
-                f"Expected status code 409 for URL: {url}"
+            if url == '/api/accommodation':
+                self.assertEqual(
+                response.status_code, 400, 
+                f"Expected status code 400 for URL: {url}"
             )
-            self.assertTrue(
-                self.error_schema(**response.json()), 
-                f"Invalid error payload for URL: {url}"
+            elif url == '/api/consume':
+                self.assertEqual(
+                response.status_code, 201, 
+                f"Expected status code 400 for URL: {url}"
             )
-    
+            else:
+                self.assertEqual(
+                    response.status_code, 409, 
+                    f"Expected status code 409 for URL: {url}"
+                )
+                self.assertTrue(
+                    self.error_schema(**response.json()), 
+                    f"Invalid error payload for URL: {url}"
+                )
+        
     def _replace_uuid_with_object_id(self, json_dict):
         for key, value in json_dict.items():
             if value == 'uuid':

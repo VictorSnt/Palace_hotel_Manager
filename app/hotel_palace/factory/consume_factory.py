@@ -12,9 +12,6 @@ class ConsumeFactory(factory.django.DjangoModelFactory):
     accommodation = factory.LazyAttribute(
         lambda o: Accommodation.objects.first() or AccommodationFactory()
     )
-    room = factory.LazyAttribute(
-        lambda o: Room.objects.first() or RoomFactory()
-    )
     product = factory.LazyAttribute(
         lambda o: Product.objects.first() or ProductFactory()
     )

@@ -34,8 +34,8 @@ class RoomService(BaseService):
         id = RoomService._validate_n_parse_uuid(room.category)
         category = DataBaseHandler.get_by_ids(Category, id)
         RoomService._validate_queryset(category)
-        parsed_category = RoomService._parse_schema(room, category)
-        args = Room, parsed_category
+        parsed_room = RoomService._parse_schema(room, category)
+        args = Room, parsed_room
         response = DataBaseHandler.try_to_create(*args)
         RoomService._validate_obj_creation(response)
         return 201, {'message': 'Criado com sucesso'}

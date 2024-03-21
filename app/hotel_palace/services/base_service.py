@@ -3,6 +3,8 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.db.models import Model
 from ninja import Schema
+
+from ..database.handlers.database_handler import DataBaseHandler
 from ..schemas.query_strings.database_filter import DBFilter
 from ..validators.id_validator import IDValidator
 from ..validators.db_validators import DBValidator
@@ -41,6 +43,16 @@ class BaseService:
     
     @staticmethod
     def _validate_obj_creation(response: tuple[bool, Model]) -> None:
+     
         room_obj, is_created = response
         DBValidator.is_created_or_already_exist(is_created, room_obj)
-        
+    
+    @staticmethod
+    def _parse_data(obj: Schema, service):
+        obj_dict = obj.model_dump()
+        for attribute, model in service.foreing_keys:
+            ids = BaseService._validate_n_parse_uuid(obj_dict[attribute])
+            obj = DataBaseHandler.get_by_ids(model, ids)
+            BaseService._validate_queryset(obj)
+            obj_dict[attribute] = obj.first()
+        return obj_dict

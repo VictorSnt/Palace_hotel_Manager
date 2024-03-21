@@ -8,7 +8,6 @@ from ...schemas.models.accomodation_schema import AccommodationOutSchema
 from ...schemas.models.consume_schema import ConsumeOutSchema
 
 
-
 class TestObjCreation(TestCase):
     
     def setUp(self) -> None:
@@ -82,15 +81,8 @@ class TestObjCreation(TestCase):
                     "room": "uuid",
                     "customer": "uuid",
                     "guest_quant": 1,
-                    "is_active": True,
-                    "days_quant": 1,
                     "checkin_date": "2024-03-11",
-                    "checkout_date": "2024-03-11",
-                    "checkin_time": "23:36:15",
-                    "checkout_time": "23:36:15",
-                    "hosting_price": 150,
-                    "total_hosting_price": 150,
-                    "total_bill": 150
+                    
                 },
                 AccommodationOutSchema
             ),
@@ -98,11 +90,8 @@ class TestObjCreation(TestCase):
                 '/api/consume',
                 {
                     "accommodation": "uuid",
-                    "room": "uuid",
                     "product": "uuid",
                     "quantity": 2,
-                    "unit_price": 2,
-                    "total": 4
                 },
                 ConsumeOutSchema
             ),

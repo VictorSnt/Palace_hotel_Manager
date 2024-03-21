@@ -124,7 +124,6 @@ class Consume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     accommodation = models.ForeignKey(
         Accommodation, on_delete=models.PROTECT, related_name='consumes')
-    room = models.ForeignKey(Room, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=5, decimal_places=2)

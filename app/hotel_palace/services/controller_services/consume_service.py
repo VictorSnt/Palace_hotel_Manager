@@ -1,6 +1,7 @@
 from typing import List
+
 from ...database.handlers.database_handler import DataBaseHandler
-from ...models import Accommodation, Consume, Product, Room
+from ...models import Accommodation, Consume, Product
 from ...schemas.models.consume_schema import (
     ConsumeInSchema, ConsumeOutSchema
 )
@@ -13,6 +14,10 @@ class ConsumeService(BaseService):
     
     ConsumeList = List[ConsumeOutSchema]
     Success201  = tuple[int, SuccessDetailed]
+    foreing_keys = [
+            ('accommodation', Accommodation), 
+            ('product', Product)
+        ]
     
     @staticmethod
     def get_all(dbfilter: DBFilter) -> ConsumeList:
@@ -29,20 +34,24 @@ class ConsumeService(BaseService):
         ConsumeService._validate_queryset(prod_consume)
         return prod_consume
 
-    
     @staticmethod
     def create(consume: ConsumeInSchema) -> Success201:
-        foreing_keys = [
-            ('accommodation', Accommodation), 
-            ('product', Product),
-            ('room', Room)
-        ]
-        consume_dict = consume.model_dump()
-        for attribute, model in foreing_keys:
-            ids = ConsumeService._validate_n_parse_uuid(consume_dict[attribute])
-            obj = DataBaseHandler.get_by_ids(model, ids)
-            ConsumeService._validate_queryset(obj)
-            consume_dict[attribute] = obj.first()
-        response = DataBaseHandler.try_to_create(Consume, consume_dict)
-        ConsumeService._validate_obj_creation(response)
+        consume_dict = ConsumeService._parse_data(consume, ConsumeService)
+        ConsumeService._parse_product_info(consume_dict)
+        ConsumeService._parse_accommodation_info(consume_dict)
+        DataBaseHandler.try_to_create(Consume, consume_dict, allow_dups=True)
         return 201, {'message': 'Criado com sucesso'}
+    
+    @staticmethod
+    def _parse_product_info(obj: dict):
+        obj['unit_price'] = obj['product'].price
+        obj['total'] = obj['product'].price * obj['quantity']
+        
+    @staticmethod
+    def _parse_accommodation_info(obj: dict):
+        total_bill = float(obj['accommodation'].total_bill)
+        total_bill += obj['total']
+        obj['accommodation'].total_bill = total_bill
+        obj['accommodation'].save()
+        
+    

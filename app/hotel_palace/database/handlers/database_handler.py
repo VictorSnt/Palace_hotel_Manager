@@ -3,7 +3,7 @@ from django.db.models import Model
 
 from typing import List
 from uuid import UUID
-
+from ...services.errors.exceptions import IntegrityError
 from ...schemas.query_strings.database_filter import DBFilter
 
 
@@ -34,7 +34,6 @@ class DataBaseHandler:
         queryset = model_class.objects.all()
         if dbfilter and dbfilter.order_by:
             key = DataBaseHandler.__order_by(queryset, dbfilter)
-        
         return queryset.order_by(key)
 
     @staticmethod
@@ -64,21 +63,33 @@ class DataBaseHandler:
         queryset = model_class.objects.filter(id__in=ids)
         if dbfilter and dbfilter.order_by:
             key = DataBaseHandler.__order_by(queryset, dbfilter)
-        
-            
         return queryset.order_by(key)
 
             
     @staticmethod
     def try_to_create(
         model_class: Model, 
-        model_schema: dict
+        model_schema: dict,
+        allow_dups=False
         ) -> tuple[Model, bool]:
+        try:
+            if allow_dups:
+                return model_class.objects.create(**model_schema), True
+            else:
+                return model_class.objects.get_or_create(**model_schema)
+                
+        except IntegrityError:
+            unique_field_name = [
+                field.name for field in model_class._meta.fields 
+                if field.unique and field.name in model_schema.keys()
+            ][0]
+            query = {unique_field_name: model_schema[unique_field_name]}
+            existing_instance = model_class.objects.filter(**query).first()
+            return existing_instance, False
         
-        return model_class.objects.get_or_create(**model_schema)
         
     @staticmethod
-    def __order_by(queryset: QuerySet, dbfilter: DBFilter) -> QuerySet:
+    def __order_by(dbfilter: DBFilter) -> QuerySet:
         """
         Ordena uma queryset de acordo com os parâmetros fornecidos.
 
