@@ -49,8 +49,6 @@ class DBValidator:
             )
            
     def is_valid_db_field(model: Model, field: str):
-        if not field:
-            return
         existent_fields = [str(field.name) for field in model._meta.fields]
         if not field in existent_fields:
             invalid_params = {

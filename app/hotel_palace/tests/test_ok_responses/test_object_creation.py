@@ -103,6 +103,7 @@ class TestObjCreation(TestCase):
             response = self.client.post(url, data, 'application/json')
             self.assertEqual(response.status_code, 201)
             response = self.client.get(url)
+            
             self.assertTrue(
                 schema(**response.json()['results'][0]), 
                 f"Invalid error payload for URL: {url}"

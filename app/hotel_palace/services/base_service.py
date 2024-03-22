@@ -16,8 +16,9 @@ class BaseService:
 
     @staticmethod
     def _validate_db_field(model: Model, dbfilter: DBFilter) -> None:
-        DBValidator.is_valid_db_field(model, dbfilter.order_by)
-
+        if dbfilter and dbfilter.order_by: 
+            DBValidator.is_valid_db_field(model, dbfilter.order_by)
+        
     @staticmethod
     def _validate_queryset(rooms: QuerySet) -> None:
         DBValidator.is_valid_and_not_empty_queryset(rooms)
@@ -35,10 +36,11 @@ class BaseService:
     @staticmethod    
     def _parse_schema(schema: Schema, *args) -> dict[str, Any]:
         schema_dict = schema.model_dump()
-        for arg in args:
-            arg = arg.first()
-            arg_name = str(arg.__class__.__name__).lower()
-            schema_dict[arg_name] = arg
+        if args:
+            for arg in args:
+                arg = arg.first()
+                arg_name = str(arg.__class__.__name__).lower()
+                schema_dict[arg_name] = arg
         return schema_dict
     
     @staticmethod

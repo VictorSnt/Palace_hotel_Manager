@@ -3,6 +3,8 @@ from django.db.models import Model
 
 from typing import List
 from uuid import UUID
+
+from ninja import Schema
 from ...services.errors.exceptions import IntegrityError
 from ...schemas.query_strings.database_filter import DBFilter
 
@@ -86,8 +88,15 @@ class DataBaseHandler:
             query = {unique_field_name: model_schema[unique_field_name]}
             existing_instance = model_class.objects.filter(**query).first()
             return existing_instance, False
-        
-        
+            
+    @staticmethod
+    def update(obj: Model, props: Schema):
+        props_dict = props.model_dump()
+        for key, value in props_dict.items():
+            if value:
+                setattr(obj, key, value)
+        obj.save()
+    
     @staticmethod
     def __order_by(dbfilter: DBFilter) -> QuerySet:
         """

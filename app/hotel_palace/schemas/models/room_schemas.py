@@ -16,3 +16,8 @@ class RoomOutSchema(BaseRoomSchema):
 
 class RoomInSchema(BaseRoomSchema):
     category: str
+
+class RoomUpdaterSchema(Schema):
+    number: str = None
+    status: str = None
+    category: str = None
