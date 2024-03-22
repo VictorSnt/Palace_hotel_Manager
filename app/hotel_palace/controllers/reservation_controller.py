@@ -4,6 +4,8 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
+
+from ..models import Reservation
 from ..schemas.models.reservation_schema import (
     ReservationInSchema, ReservationOutSchema
 )
@@ -11,6 +13,7 @@ from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.reservation_service import ReservationService
 from ..schemas.reponses.success_schemas import SuccessDetailed
 from ..schemas.reponses.error_schemas import ErrorDetailed
+
 
 @api_controller('/reservation', tags=['Reservation'])
 class ReservationController:
@@ -27,16 +30,16 @@ class ReservationController:
     }
     
     
+    @route.get('/{id}', response=get_method_responses)
+    @paginate(PageNumberPaginationExtra, page_size=36)
+    def get_reservations_by_id(self, id: str, dbfilter: Query[DBFilter]):
+        return ReservationService.get_by_ids(id, Reservation, dbfilter)
+    
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_reservations(self, dbfilter: Query[DBFilter]):
-        return ReservationService.get_all(dbfilter)
+        return ReservationService.get_all(Reservation, dbfilter)
     
-    @route.get('/{ids}', response=get_method_responses)
-    @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_reservations_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ReservationService.get_by_ids(ids, dbfilter)
-
     @route.post('', response=post_method_responses)
     def create(self, reservation: ReservationInSchema):
         return ReservationService.create(reservation)

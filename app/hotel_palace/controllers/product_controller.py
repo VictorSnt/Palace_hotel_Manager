@@ -4,6 +4,8 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
+
+from ..models import Product
 from ..schemas.models.product_schema import (
     ProductInSchema, ProductOutSchema
 )
@@ -28,17 +30,17 @@ class ProductController:
         422: ErrorDetailed
     }
     
+    @route.get('/{id}', response=get_method_responses)
+    @paginate(PageNumberPaginationExtra, page_size=36)
+    def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
+        return ProductService.get_by_ids(id, Product, dbfilter)
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
-        return ProductService.get_all(dbfilter)
-    
-    @route.get('/{ids}', response=get_method_responses)
-    @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ProductService.get_by_ids(ids, dbfilter)
+        return ProductService.get_all(Product, dbfilter)
 
     @route.post('', response=post_method_responses)
     def create(self, product: ProductInSchema):
         return ProductService.create(product)
+    

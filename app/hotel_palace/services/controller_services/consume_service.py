@@ -18,21 +18,6 @@ class ConsumeService(BaseService):
             ('accommodation', Accommodation), 
             ('product', Product)
         ]
-    
-    @staticmethod
-    def get_all(dbfilter: DBFilter) -> ConsumeList:
-        ConsumeService._validate_db_field(Consume, dbfilter) 
-        prod_consume = DataBaseHandler.get_all(Consume, dbfilter)
-        ConsumeService._validate_queryset(prod_consume)
-        return prod_consume
-        
-    @staticmethod
-    def get_by_ids(ids: str, dbfilter: DBFilter) -> ConsumeList:
-        ConsumeService._validate_db_field(Consume, dbfilter) 
-        ids = ConsumeService._validate_n_parse_uuid(ids)
-        prod_consume = DataBaseHandler.get_by_ids(Consume, ids, dbfilter)
-        ConsumeService._validate_queryset(prod_consume)
-        return prod_consume
 
     @staticmethod
     def create(consume: ConsumeInSchema) -> Success201:

@@ -4,6 +4,8 @@ from ninja_extra.pagination import (
 )
 from ninja_extra import api_controller, route
 from ninja import Query
+
+from ..models import Category
 from ..services.controller_services.category_service import CategoryService
 from ..schemas.models.category_schemas import (
     CategoryInSchema, CategoryOutSchema
@@ -26,16 +28,16 @@ class CategoryController:
         422: ErrorDetailed
     }
     
+    @route.get('/{id}', response=get_method_responses)
+    @paginate(PageNumberPaginationExtra, page_size=36)
+    def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
+       return CategoryService.get_by_ids(id, Category, dbfilter)
+   
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
-       return CategoryService.get_all(dbfilter)
-    
-    @route.get('/{ids}', response=get_method_responses)
-    @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-       return CategoryService.get_by_ids(ids, dbfilter)
-      
+       return CategoryService.get_all(Category, dbfilter)
+
     @route.post('', response=post_method_responses)
     def create(self, category: CategoryInSchema): 
         return CategoryService.create(category)

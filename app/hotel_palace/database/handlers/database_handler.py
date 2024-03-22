@@ -90,9 +90,8 @@ class DataBaseHandler:
             return existing_instance, False
             
     @staticmethod
-    def update(obj: Model, props: Schema):
-        props_dict = props.model_dump()
-        for key, value in props_dict.items():
+    def update(obj: Model, props: dict):
+        for key, value in props.items():
             if value:
                 setattr(obj, key, value)
         obj.save()

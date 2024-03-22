@@ -16,21 +16,6 @@ class RoomService(BaseService):
     Success201  = Tuple[int, SuccessDetailed]
     
     @staticmethod
-    def get_all(dbfilter: DBFilter) -> RoomList:
-        RoomService._validate_db_field(Room, dbfilter)
-        rooms = DataBaseHandler.get_all(Room, dbfilter)
-        RoomService._validate_queryset(rooms)
-        return rooms
-    
-    @staticmethod
-    def get_by_ids(ids: str, model, dbfilter: DBFilter=None) -> RoomList:
-        RoomService._validate_db_field(model, dbfilter) 
-        ids = RoomService._validate_n_parse_uuid(ids)
-        rooms = DataBaseHandler.get_by_ids(model, ids, dbfilter)
-        RoomService._validate_queryset(rooms)
-        return rooms
-    
-    @staticmethod
     def create(room: RoomInSchema) -> Success201:
         RoomService._validate_enum(RoomStatus, room.status, 'status')
         category = RoomService.get_by_ids(room.category, Category)

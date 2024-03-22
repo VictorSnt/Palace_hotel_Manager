@@ -22,23 +22,6 @@ class CustomerService(BaseService):
     Success201  = tuple[int, SuccessDetailed]
     
     @staticmethod
-    def get_all(dbfilter: DBFilter) -> CostumerList:
-        
-        CustomerService._validate_db_field(Customer, dbfilter) 
-        customers = DataBaseHandler.get_all(Customer, dbfilter)
-        CustomerService._validate_queryset(customers)
-        return customers
-    
-    @staticmethod
-    def get_by_ids(ids: str, dbfilter: DBFilter) -> CostumerList:
-        
-        CustomerService._validate_db_field(Customer, dbfilter) 
-        ids = CustomerService._validate_n_parse_uuid(ids)
-        customers = DataBaseHandler.get_by_ids(Customer, ids, dbfilter)
-        CustomerService._validate_queryset(customers)
-        return customers
-    
-    @staticmethod
     def create(customer: CustomerInSchema) -> Success201:
         
         enums_list = CustomerService._get_customers_enums_list(customer)

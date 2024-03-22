@@ -3,6 +3,8 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
+
+from ..models import Accommodation
 from ..schemas.query_strings.database_filter import DBFilter
 from ..schemas.models.accomodation_schema import (
     AccommodationInSchema, AccommodationOutSchema
@@ -27,16 +29,15 @@ class AccommodationController:
         422: ErrorDetailed
     }
     
+    @route.get('/{id}', response=get_method_responses)
+    @paginate(PageNumberPaginationExtra, page_size=36)
+    def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
+        return AccommodationService.get_by_ids(id, Accommodation, dbfilter)
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
-        return AccommodationService.get_all(dbfilter)
-    
-    @route.get('/{ids}', response=get_method_responses)
-    @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return AccommodationService.get_by_ids(ids, dbfilter)
+        return AccommodationService.get_all(Accommodation, dbfilter)
     
     @route.post('', response=post_method_responses)
     def create(self, accommodation: AccommodationInSchema):

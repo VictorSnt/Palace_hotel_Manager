@@ -37,7 +37,7 @@ class RoomController:
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
         return RoomService.get_by_ids(id, Room, dbfilter)
-
+    
     @route.post('', response=post_method_responses)
     def create(self, room: RoomInSchema):
         return RoomService.create(room=room)
@@ -45,5 +45,5 @@ class RoomController:
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
-        return RoomService.get_all(dbfilter)
+        return RoomService.get_all(Room, dbfilter)
          

@@ -4,6 +4,8 @@ from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
+
+from ..models import Consume
 from ..schemas.models.consume_schema import (
     ConsumeInSchema, ConsumeOutSchema
 )
@@ -26,16 +28,15 @@ class ConsumeController:
         422: ErrorDetailed
     }
     
+    @route.get('/{id}', response=get_method_responses)
+    @paginate(PageNumberPaginationExtra, page_size=36)
+    def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
+        return ConsumeService.get_by_ids(id, Consume, dbfilter)
     
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
-        return ConsumeService.get_all(dbfilter)
-    
-    @route.get('/{ids}', response=get_method_responses)
-    @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_by_id(self, ids: str, dbfilter: Query[DBFilter]):
-        return ConsumeService.get_by_ids(ids, dbfilter)
+        return ConsumeService.get_all(Consume, dbfilter)
     
     @route.post('', response=post_method_responses)
     def create(self, consume: ConsumeInSchema):

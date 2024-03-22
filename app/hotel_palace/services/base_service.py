@@ -13,7 +13,21 @@ from ..services.trasformators.parsers import IDParser
 
 
 class BaseService:
-
+    staticmethod
+    def get_all(model: Model, dbfilter: DBFilter) -> QuerySet:
+        BaseService._validate_db_field(model, dbfilter)
+        reservations = DataBaseHandler.get_all(model, dbfilter)
+        BaseService._validate_queryset(reservations)
+        return reservations
+    
+    @staticmethod
+    def get_by_ids(ids: str, model: Model, dbfilter: DBFilter=None) -> Model:
+        BaseService._validate_db_field(model, dbfilter) 
+        ids = BaseService._validate_n_parse_uuid(ids)
+        obj = DataBaseHandler.get_by_ids(model, ids, dbfilter)
+        BaseService._validate_queryset(obj)
+        return obj
+    
     @staticmethod
     def _validate_db_field(model: Model, dbfilter: DBFilter) -> None:
         if dbfilter and dbfilter.order_by: 

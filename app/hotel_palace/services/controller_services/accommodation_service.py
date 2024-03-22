@@ -23,22 +23,6 @@ class AccommodationService(BaseService):
         ]
     
     @staticmethod
-    def get_all(dbfilter: DBFilter) -> AccommodationList:
-        AccommodationService._validate_db_field(Accommodation, dbfilter) 
-        accommodations = DataBaseHandler.get_all(Accommodation, dbfilter)
-        AccommodationService._validate_queryset(accommodations)
-        return accommodations
-    
-    @staticmethod
-    def get_by_ids(ids: str, dbfilter: DBFilter) -> AccommodationList:
-        AccommodationService._validate_db_field(Accommodation, dbfilter) 
-        ids = AccommodationService._validate_n_parse_uuid(ids)
-        args = (Accommodation, ids, dbfilter)
-        accommodations = DataBaseHandler.get_by_ids(*args)
-        AccommodationService._validate_queryset(accommodations)
-        return accommodations
-    
-    @staticmethod
     def create(accommodation: AccommodationInSchema) -> Success201:
         args = (accommodation, AccommodationService)
         accommodations_dict = AccommodationService._parse_data(*args)
