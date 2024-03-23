@@ -1,6 +1,9 @@
 from django.shortcuts import get_object_or_404
 from ninja_schema import ModelSchema
 from ...models import Reservation, Room
+from ...services.controller_services.reservation_service import (
+    ReservationService
+)
 
 
 class ReservationOutSchema(ModelSchema):
@@ -26,4 +29,5 @@ class CreateReservationSchema(ModelSchema):
         category_id = schema_dict.get('room')
         instance = get_object_or_404(Room, pk=category_id)
         schema_dict['room'] = instance
+        ReservationService._validate_reservation(schema_dict)
         return schema_dict

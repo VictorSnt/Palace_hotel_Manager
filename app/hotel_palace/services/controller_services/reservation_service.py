@@ -10,11 +10,11 @@ class ReservationService(BaseService):
     Success201  = tuple[int, SuccessDetailed]
 
     @staticmethod
-    def _validate_reservation(model: Reservation, reserv_schema: Schema):
+    def _validate_reservation(reserv_schema: dict):
         try:
-            room = reserv_schema.room
+            room = reserv_schema['room']
             query = {'checkin_date': reserv_schema.checkin_date}
-            reserv = model.objects.get(**query)
+            reserv = Reservation.objects.get(**query)
             if reserv.room.number == room.number:
                 ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=ValidationError,
@@ -23,6 +23,6 @@ class ReservationService(BaseService):
                 title='Reservation conflict',
                 detail='Ja existe reserva para o mesmo quarto na mesma data',
             )
-        except model.DoesNotExist:
+        except Reservation.DoesNotExist:
             return
         
