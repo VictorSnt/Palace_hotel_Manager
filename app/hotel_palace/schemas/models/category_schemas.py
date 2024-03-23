@@ -1,17 +1,21 @@
-from uuid import UUID
-from ninja import Schema
+from ninja_schema import ModelSchema
 from ...models import Category
 
 
-class BaseCategorySchema(Schema):
-    description: str
-    one_guest_price: float
-    two_guest_price: float
-    three_guest_price: float
-    four_guest_price: float
-
-class CategoryOutSchema(BaseCategorySchema):
-    id: UUID
-
-class CategoryInSchema(BaseCategorySchema):
-    pass
+class CreateCategorySchema(ModelSchema):
+    class Config:
+        model = Category
+        include = [
+            'description', 'one_guest_price',
+            'two_guest_price', 'three_guest_price',
+            'four_guest_price' 
+        ]
+        
+class CategoryOutSchema(ModelSchema):
+    class Config:
+        model = Category
+        include = [
+            'id', 'description', 
+            'one_guest_price', 'two_guest_price',
+            'three_guest_price', 'four_guest_price' 
+        ]

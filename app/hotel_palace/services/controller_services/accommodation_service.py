@@ -1,39 +1,13 @@
 from datetime import datetime, time, timedelta
 from decimal import ROUND_UP, Decimal
-from typing import List
-
 from ...services.errors.error_payload_generator import ErrorPayloadGenerator
-from ...schemas.reponses.success_schemas import SuccessDetailed
-from ...database.handlers.database_handler import DataBaseHandler
-from ...models import Accommodation, Customer, Room
-from ...schemas.models.accomodation_schema import (
-    AccommodationInSchema, AccommodationOutSchema
-)
-from ...schemas.query_strings.database_filter import DBFilter
 from ...services.base_service import BaseService
 from ..errors.exceptions import ValidationError
+from ...models import Room
+
 
 class AccommodationService(BaseService):
-    
-    AccommodationList = List[AccommodationOutSchema]
-    Success201  = tuple[int, SuccessDetailed]
-    foreing_keys = [
-            ('room', Room), 
-            ('customer', Customer)
-        ]
-    
-    @staticmethod
-    def create(accommodation: AccommodationInSchema) -> Success201:
-        args = (accommodation, AccommodationService)
-        accommodations_dict = AccommodationService._parse_data(*args)
-        AccommodationService._validate_room(accommodations_dict['room'])
-        AccommodationService._define_dates(accommodations_dict)
-        AccommodationService._calc_hosting_price(accommodations_dict)
-        args = (Accommodation, accommodations_dict)
-        response = DataBaseHandler.try_to_create(*args)
-        AccommodationService._validate_obj_creation(response)
-        return 201, {'message': 'Criado com sucesso'}
-    
+   
     @staticmethod
     def _define_dates(obj: dict):
         today_date = datetime.now().date()
@@ -48,6 +22,7 @@ class AccommodationService(BaseService):
         obj['checkout_date'] = obj['checkin_date'] + timedelta(days=1)
         obj['checkin_time'] = nows_time
         obj['checkout_time'] = time(13,30)
+        
     
     @staticmethod
     def _calc_hosting_price(obj: dict):
@@ -81,6 +56,7 @@ class AccommodationService(BaseService):
         room.status = 'OCCUPIED'
         room.save()
         obj['is_active'] = True
+        
     
     @staticmethod
     def _validate_room(room: Room):

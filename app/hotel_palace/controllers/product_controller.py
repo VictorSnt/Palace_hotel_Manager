@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from ninja import Query
 from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
@@ -7,7 +6,7 @@ from ninja_extra.pagination import (
 
 from ..models import Product
 from ..schemas.models.product_schema import (
-    ProductInSchema, ProductOutSchema
+    CreateProductSchema, ProductOutSchema
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.product_service import ProductService
@@ -41,6 +40,6 @@ class ProductController:
         return ProductService.get_all(Product, dbfilter)
 
     @route.post('', response=post_method_responses)
-    def create(self, product: ProductInSchema):
-        return ProductService.create(product)
+    def create(self, product: CreateProductSchema):
+        return ProductService.create(Product, product)
     

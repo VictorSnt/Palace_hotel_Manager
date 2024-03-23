@@ -28,7 +28,7 @@ class TestObjCreation(TestCase):
                 '/api/room', 
                 {
                     "number": "123",
-                    "status": "FREE",
+                    "status": "Livre",
                     "category": "uuid"
                 },
                 RoomOutSchema
@@ -40,8 +40,8 @@ class TestObjCreation(TestCase):
                     "birth_date": "2000-03-11",
                     "cpf": "string",
                     "rg": "string",
-                    "gender": "MALE",
-                    "marital_status": "MARRIED",
+                    "gender": "Masc",
+                    "marital_status": "Casado(a)",
                     "partner": "string",
                     "occupation": "string",
                     "occupation_company_name": "string",
@@ -51,7 +51,7 @@ class TestObjCreation(TestCase):
                     "address_ref": "string",
                     "address_district": "string",
                     "address_city": "string",
-                    "address_uf": "MINAS_GERAIS",
+                    "address_uf": "MG",
                     "phone": "string",
                     "cellphone": "string",
                     "email": "string"

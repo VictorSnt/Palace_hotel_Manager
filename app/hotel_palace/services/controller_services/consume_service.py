@@ -1,36 +1,6 @@
-from typing import List
-
-from ...database.handlers.database_handler import DataBaseHandler
-from ...models import Accommodation, Consume, Product
-from ...schemas.models.consume_schema import (
-    ConsumeInSchema, ConsumeOutSchema
-)
-from ...schemas.reponses.success_schemas import SuccessDetailed
-from ...schemas.query_strings.database_filter import DBFilter
 from ...services.base_service import BaseService
 
-
 class ConsumeService(BaseService):
-    
-    ConsumeList = List[ConsumeOutSchema]
-    Success201  = tuple[int, SuccessDetailed]
-    foreing_keys = [
-            ('accommodation', Accommodation), 
-            ('product', Product)
-        ]
-
-    @staticmethod
-    def create(consume: ConsumeInSchema) -> Success201:
-        consume_dict = ConsumeService._parse_data(consume, ConsumeService)
-        ConsumeService._parse_product_info(consume_dict)
-        ConsumeService._parse_accommodation_info(consume_dict)
-        DataBaseHandler.try_to_create(Consume, consume_dict, allow_dups=True)
-        return 201, {'message': 'Criado com sucesso'}
-    
-    @staticmethod
-    def _parse_product_info(obj: dict):
-        obj['unit_price'] = obj['product'].price
-        obj['total'] = obj['product'].price * obj['quantity']
         
     @staticmethod
     def _parse_accommodation_info(obj: dict):

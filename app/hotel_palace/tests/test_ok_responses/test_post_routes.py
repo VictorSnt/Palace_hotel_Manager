@@ -26,8 +26,8 @@ class TestServicesPOSTRoutes(TestCase):
             ('/api/room', 
                 {
                     "number": "123",
-                    "status": "FREE",
-                    "category": "uuid"
+                    "status": "Livre",
+                    "category_id": "uuid"
                 }
             ),
             ('/api/customer',
@@ -36,8 +36,8 @@ class TestServicesPOSTRoutes(TestCase):
                     "birth_date": "2000-03-11",
                     "cpf": "string",
                     "rg": "string",
-                    "gender": "MALE",
-                    "marital_status": "MARRIED",
+                    "gender": "Masc",
+                    "marital_status": "Casado(a)",
                     "partner": "string",
                     "occupation": "string",
                     "occupation_company_name": "string",
@@ -47,7 +47,7 @@ class TestServicesPOSTRoutes(TestCase):
                     "address_ref": "string",
                     "address_district": "string",
                     "address_city": "string",
-                    "address_uf": "MINAS_GERAIS",
+                    "address_uf": "MG",
                     "phone": "string",
                     "cellphone": "string",
                     "email": "string"
@@ -62,23 +62,23 @@ class TestServicesPOSTRoutes(TestCase):
             ('/api/reservation',
                 {
                     "customer_name": "string",
-                    "room": "uuid",
+                    "room_id": "uuid",
                     "checkin_date": "2024-03-11"
                 }
             ),
             ('/api/accommodation',
                 {
-                    "room": "uuid",
-                    "customer": "uuid",
-                    "guest_quant": 1,
+                    "room_id": "uuid",
+                    "customer_id": "uuid",
+                    "guest_quant": '1',
                     "checkin_date": "2024-03-11",
                 }
             ),
             ('/api/consume',
                 {
-                    "accommodation": "uuid",
-                    "product": "uuid",
-                    "quantity": 2,
+                    "accommodation_id": "uuid",
+                    "product_id": "uuid",
+                    "quantity": '2',
                 }
             ),
         ]
@@ -93,6 +93,7 @@ class TestServicesPOSTRoutes(TestCase):
         for url, json_dict in self.test_cases:
             self._replace_uuid_with_object_id(json_dict)
             response = self.client.post(url, json_dict, 'application/json')
+            input(response.content)
             self.assertEqual(
                 
                 response.status_code, 201, 

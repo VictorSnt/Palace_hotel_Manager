@@ -6,7 +6,7 @@ from ninja_extra.pagination import (
 
 from ..models import Room
 from ..schemas.models.room_schemas import (
-    RoomOutSchema, RoomInSchema, RoomUpdaterSchema
+    RoomOutSchema, CreateRoomSchema, RoomUpdaterSchema
 )
 from ..services.controller_services.room_service import RoomService
 from ..schemas.reponses.error_schemas import ErrorDetailed
@@ -39,8 +39,8 @@ class RoomController:
         return RoomService.get_by_ids(id, Room, dbfilter)
     
     @route.post('', response=post_method_responses)
-    def create(self, room: RoomInSchema):
-        return RoomService.create(room=room)
+    def create(self, room: CreateRoomSchema):
+        return RoomService.create(Room, room)
 
     @route.get('', response=get_method_responses)
     @paginate(PageNumberPaginationExtra, page_size=36)

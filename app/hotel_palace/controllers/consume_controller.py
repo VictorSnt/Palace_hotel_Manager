@@ -7,7 +7,7 @@ from ninja_extra.pagination import (
 
 from ..models import Consume
 from ..schemas.models.consume_schema import (
-    ConsumeInSchema, ConsumeOutSchema
+    CreateConsumeSchema, ConsumeOutSchema
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.consume_service import ConsumeService
@@ -39,6 +39,6 @@ class ConsumeController:
         return ConsumeService.get_all(Consume, dbfilter)
     
     @route.post('', response=post_method_responses)
-    def create(self, consume: ConsumeInSchema):
-        return ConsumeService.create(consume)
+    def create(self, consume: CreateConsumeSchema):
+        return ConsumeService.create(Consume, consume)
         

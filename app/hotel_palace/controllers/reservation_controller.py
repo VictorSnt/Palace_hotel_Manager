@@ -7,7 +7,7 @@ from ninja_extra.pagination import (
 
 from ..models import Reservation
 from ..schemas.models.reservation_schema import (
-    ReservationInSchema, ReservationOutSchema
+    CreateReservationSchema, ReservationOutSchema
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.reservation_service import ReservationService
@@ -41,6 +41,6 @@ class ReservationController:
         return ReservationService.get_all(Reservation, dbfilter)
     
     @route.post('', response=post_method_responses)
-    def create(self, reservation: ReservationInSchema):
-        return ReservationService.create(reservation)
+    def create(self, reservation: CreateReservationSchema):
+        return ReservationService.create(Reservation, reservation)
         

@@ -7,7 +7,7 @@ from ninja_extra.pagination import (
 
 from ..models import Customer
 from ..schemas.models.customer_schema import (
-    CustomerInSchema, CustomerOutSchema
+    CreateCustomerSchema, CustomerOutSchema
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.customer_service import CustomerService
@@ -41,6 +41,6 @@ class CustomerController:
         return CustomerService.get_all(Customer, dbfilter)
 
     @route.post('', response=post_method_responses)
-    def create_customer(self, customer: CustomerInSchema):
-        return CustomerService.create(customer)
+    def create_customer(self, customer: CreateCustomerSchema):
+        return CustomerService.create(Customer, customer)
     

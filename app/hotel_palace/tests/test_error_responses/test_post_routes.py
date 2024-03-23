@@ -12,7 +12,7 @@ class TestPostErrorPayloads(TestCase):
             ('/api/room', 
                 {
                     "number": "123",
-                    "status": "FREE",
+                    "status": "Livre",
                     "category": "uuid"
                 }
             ),

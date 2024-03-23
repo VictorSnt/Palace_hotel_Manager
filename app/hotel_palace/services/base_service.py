@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Tuple
 from django.db.models.query import QuerySet
 from django.db.models import Model
 from ninja import Schema
@@ -10,10 +10,22 @@ from ..validators.id_validator import IDValidator
 from ..validators.db_validators import DBValidator
 from ..validators.enum_validator import EnumValidator
 from ..services.trasformators.parsers import IDParser
+from ..schemas.reponses.success_schemas import SuccessDetailed
 
 
 class BaseService:
-    staticmethod
+    
+    Success201  = Tuple[int, SuccessDetailed]
+    
+    
+    @staticmethod
+    def create(model: Model, model_schema: Schema) -> Success201:
+        args = model, model_schema.model_dump()
+        response = DataBaseHandler.try_to_create(*args)
+        BaseService._validate_obj_creation(response)
+        return 201, {'message': 'Criado com sucesso'}
+    
+    @staticmethod
     def get_all(model: Model, dbfilter: DBFilter) -> QuerySet:
         BaseService._validate_db_field(model, dbfilter)
         reservations = DataBaseHandler.get_all(model, dbfilter)
@@ -63,12 +75,3 @@ class BaseService:
         room_obj, is_created = response
         DBValidator.is_created_or_already_exist(is_created, room_obj)
     
-    @staticmethod
-    def _parse_data(obj: Schema, service):
-        obj_dict = obj.model_dump()
-        for attribute, model in service.foreing_keys:
-            ids = BaseService._validate_n_parse_uuid(obj_dict[attribute])
-            obj = DataBaseHandler.get_by_ids(model, ids)
-            BaseService._validate_queryset(obj)
-            obj_dict[attribute] = obj.first()
-        return obj_dict

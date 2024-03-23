@@ -63,7 +63,7 @@ class Customer(models.Model):
         max_length=2, choices=[(s.value, s.name) for s in BrazilianStates],
         blank=True, null=True
     )
-    phone = models.CharField(max_length=21)
+    phone = models.CharField(max_length=21, blank=True, null=True, unique=True)
     cellphone = models.CharField(max_length=21, blank=True, null=True)
     email = models.EmailField(max_length=254, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,7 +79,6 @@ class Room(models.Model):
     status = models.CharField(
         max_length=10, 
         choices=[(s.value, s.name) for s in RoomStatus],
-        default='FREE'
     )
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -94,8 +93,9 @@ class Accommodation(models.Model):
         Room, on_delete=models.PROTECT, related_name='accommodations'
     )
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
-    guest_quant = models.CharField(
-        max_length=10, choices=[(s.value, s.name) for s in GuestQuantity], 
+    guest_quant = models.IntegerField(
+        
+        choices=[(s.value, s.name) for s in GuestQuantity], 
         default=GuestQuantity.ONE.value
     )
     is_active = models.BooleanField(default=True)

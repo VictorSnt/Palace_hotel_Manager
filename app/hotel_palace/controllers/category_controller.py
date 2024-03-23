@@ -8,7 +8,7 @@ from ninja import Query
 from ..models import Category
 from ..services.controller_services.category_service import CategoryService
 from ..schemas.models.category_schemas import (
-    CategoryInSchema, CategoryOutSchema
+    CreateCategorySchema, CategoryOutSchema
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..schemas.reponses.error_schemas import ErrorDetailed
@@ -39,5 +39,5 @@ class CategoryController:
        return CategoryService.get_all(Category, dbfilter)
 
     @route.post('', response=post_method_responses)
-    def create(self, category: CategoryInSchema): 
-        return CategoryService.create(category)
+    def create(self, category: CreateCategorySchema): 
+        return CategoryService.create(Category, category)

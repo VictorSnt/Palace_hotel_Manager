@@ -1,33 +1,49 @@
-import datetime
-from ninja import Schema
-
-from datetime import date, time, datetime
-from uuid import UUID
-
-from ...schemas.models.customer_schema import CustomerOutSchema
-from ...schemas.models.room_schemas import RoomOutSchema
+from django.shortcuts import get_object_or_404
+from ninja_schema import ModelSchema, model_validator
+from ...models import Accommodation, Room, Customer
+from ...services.controller_services.accommodation_service import (
+    AccommodationService
+)
 
 
-class BaseAccommodationSchema(Schema):
-    room: RoomOutSchema
-    customer: CustomerOutSchema
-    guest_quant: int
-    checkin_date: date = datetime.now().date()
+class CreateAccommodationSchema(ModelSchema):
+    class Config:
+        model = Accommodation
+        include = [
+            'room', 'customer',
+            'guest_quant', 'checkin_date'
+        ]
+    
+    def model_dump(self, *args, **kwargs):
+        schema_dict: dict = super().model_dump(*args, **kwargs)
+        customer_id = schema_dict.get('customer')
+        room_id = schema_dict.get('room')
+        customer_instance = get_object_or_404(Customer, pk=customer_id)
+        room_instance = get_object_or_404(Room, pk=room_id)
+        schema_dict['customer'] = customer_instance
+        schema_dict['room'] = room_instance
+        AccommodationService._validate_room(schema_dict['room'])
+        AccommodationService._define_dates(schema_dict)
+        AccommodationService._calc_hosting_price(schema_dict)
+        return schema_dict
+     
+    @model_validator('guest_quant')
+    def validate_enum(cls, enum):
+        return enum.value if enum else None  
+    
+     
+class AccommodationOutSchema(ModelSchema):
+    class Config:
+        model = Accommodation
+        include = [
+            'id', 'room',
+            'customer', 'guest_quant',
+            'days_quant', 'is_active',
+            'checkin_date','checkin_time',
+            'checkout_date', 'checkout_time',
+            'hosting_price', 'total_hosting_price',
+            'total_bill'
+        ]
     
     
     
-class AccommodationOutSchema(BaseAccommodationSchema):
-    id: UUID
-    is_active: bool
-    checkout_date: date
-    checkin_time: time
-    checkout_time: time
-    days_quant: int
-    hosting_price: float
-    total_hosting_price: float
-    total_bill: float
-    
-class AccommodationInSchema(BaseAccommodationSchema):
-    room: str
-    customer: str
-           

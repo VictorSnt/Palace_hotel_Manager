@@ -1,13 +1,14 @@
-from uuid import UUID
-from ninja import Schema
+from ninja_schema import ModelSchema
+from ...models import Product
 
 
-class BaseProductSchema(Schema):
-    description: str
-    price: float
+class ProductOutSchema(ModelSchema):
+    class Config:
+        model = Product
+        include = ['id', 'description', 'price']
 
-class ProductOutSchema(BaseProductSchema):
-    id: UUID
-
-class ProductInSchema(BaseProductSchema):
-    pass
+class CreateProductSchema(ModelSchema):
+    class Config:
+        model = Product
+        include = ['description', 'price']
+    

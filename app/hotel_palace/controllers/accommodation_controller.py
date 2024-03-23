@@ -7,7 +7,7 @@ from ninja_extra.pagination import (
 from ..models import Accommodation
 from ..schemas.query_strings.database_filter import DBFilter
 from ..schemas.models.accomodation_schema import (
-    AccommodationInSchema, AccommodationOutSchema
+    CreateAccommodationSchema, AccommodationOutSchema
 )
 from ..services.controller_services.accommodation_service import (
     AccommodationService
@@ -40,5 +40,5 @@ class AccommodationController:
         return AccommodationService.get_all(Accommodation, dbfilter)
     
     @route.post('', response=post_method_responses)
-    def create(self, accommodation: AccommodationInSchema):
-        return AccommodationService.create(accommodation)
+    def create(self, accommodation: CreateAccommodationSchema):
+        return AccommodationService.create(Accommodation, accommodation)
