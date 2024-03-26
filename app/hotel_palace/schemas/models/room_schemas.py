@@ -1,7 +1,8 @@
+import json
 from django.shortcuts import get_object_or_404
 from ninja_schema import ModelSchema, model_validator
 from ...models import Category, Room
-from ...utils.enums.room_status import RoomStatus
+from ...services.errors.exceptions import ValidationError
 
 
 class RoomOutSchema(ModelSchema):
@@ -26,6 +27,18 @@ class CreateRoomSchema(ModelSchema):
             schema_dict['category'] = instance
         return schema_dict
 
+    @model_validator('number')
+    def validate_enum(cls, number: str):
+        if not number.isnumeric():
+            msg = json.dumps(
+                {
+                    'field': 'number',
+                    'detail': 'deve ser um string numerico de ate 3 digitos'
+                }
+            )
+            raise ValidationError(msg, 422)
+        return number
+    
     @model_validator('status')
     def validate_enum(cls, status):
         return status.value if status else None

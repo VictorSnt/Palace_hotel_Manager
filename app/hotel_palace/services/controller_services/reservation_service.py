@@ -1,9 +1,9 @@
-from ninja import Schema
 from ...services.errors.error_payload_generator import ErrorPayloadGenerator
-from ...models import Reservation
 from ...schemas.reponses.success_schemas import SuccessDetailed
-from ...services.base_service import BaseService
 from ...services.errors.exceptions import ValidationError
+from ...services.base_service import BaseService
+from ...models import Reservation
+
 
 class ReservationService(BaseService):
     
@@ -14,8 +14,8 @@ class ReservationService(BaseService):
         try:
             room = reserv_schema['room']
             query = {'checkin_date': reserv_schema['checkin_date']}
-            reserv = Reservation.objects.get(**query)
-            if reserv.room.number == room.number:
+            reserv = Reservation.objects.get(**query, room=room)
+            if reserv:
                 ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=ValidationError,
                 status_code=409,
