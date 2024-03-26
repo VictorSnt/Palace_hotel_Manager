@@ -53,6 +53,10 @@ class DataBaseHandler:
             raise ValidationError(message, 409)
     
     @staticmethod
+    def delete(obj: Model) -> UUID:
+        obj.delete()
+        
+    @staticmethod
     def __order_by(dbfilter: DBFilter) -> QuerySet:
         """
         Ordena uma queryset de acordo com os parâmetros fornecidos.

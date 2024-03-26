@@ -42,6 +42,10 @@ class CategoryController:
     def update(self, id, updater_schema: UpdateCategorySchema):
         return CategoryService.update(Category, id, updater_schema)
 
+    @route.delete('/{id}')
+    def delete(self, id):
+        return CategoryService.delete(Category, id)
+
     @route.get('/{id}', response=category)
     def get_by_id(self, id: UUID):
        return CategoryService.get_by_id(Category, id)

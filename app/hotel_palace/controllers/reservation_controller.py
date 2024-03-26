@@ -46,6 +46,10 @@ class ReservationController:
     def get_reservations_by_id(self, id: UUID):
         return ReservationService.get_by_id(Reservation, id)
     
+    @route.delete('/{id}')
+    def delete(self, id):
+        return ReservationService.delete(Reservation, id)
+
     @route.post('', response=post_method_responses)
     def create(self, reservation: CreateReservationSchema):
         return ReservationService.create(Reservation, reservation)

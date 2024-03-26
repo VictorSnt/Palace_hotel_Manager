@@ -42,6 +42,10 @@ class ConsumeController:
     def get_by_id(self, id: UUID):
         return ConsumeService.get_by_id(Consume, id)
     
+    @route.delete('/{id}')
+    def delete(self, id):
+        return ConsumeService.delete(Consume, id)
+
     @route.get('', response=paginated_consumes)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):

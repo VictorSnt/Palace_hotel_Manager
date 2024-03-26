@@ -34,13 +34,13 @@ class RoomController:
     def get_by_ids(self, id_list: Query[IdList], dbfilter: Query[DBFilter]):
         return RoomService.get_by_ids(Room, id_list.ids, dbfilter)
     
-    @route.put('/{id}')
-    def update(self, id, updater_schema: RoomUpdaterSchema):
-        return RoomService.update(Room, id, updater_schema)
-
     @route.get('/{id}', response=rooms_response)
     def get_by_id(self, id: UUID):
         return RoomService.get_by_id(Room, id)
+
+    @route.put('/{id}')
+    def update(self, id, updater_schema: RoomUpdaterSchema):
+        return RoomService.update(Room, id, updater_schema)
 
     @route.post('', response=post_method_responses)
     def create(self, room: CreateRoomSchema):

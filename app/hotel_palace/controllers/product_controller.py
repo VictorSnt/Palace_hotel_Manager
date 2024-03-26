@@ -40,6 +40,10 @@ class ProductController:
     def update(self, id, updater_schema: UpdateProductSchema):
         return ProductService.update(Product, id, updater_schema)
     
+    @route.delete('/{id}')
+    def delete(self, id):
+        return ProductService.delete(Product, id)
+    
     @route.get('/{id}', response=product)
     def get_by_id(self, id: UUID):
         return ProductService.get_by_id(Product, id)

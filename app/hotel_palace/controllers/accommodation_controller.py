@@ -43,8 +43,12 @@ class AccommodationController:
     
     @route.put('/{id}')
     def update(self, id, updater_schema: UpdateAccommodationSchema):
-        return AccommodationService().update(Accommodation, id, updater_schema)
+        return AccommodationService.update(Accommodation, id, updater_schema)
     
+    @route.delete('/{id}')
+    def delete(self, id):
+        return AccommodationService.delete(Accommodation, id)
+
     @route.get('/{id}', response=accomm)
     def get_by_id(self, id: UUID):
         return AccommodationService.get_by_id(Accommodation, id)

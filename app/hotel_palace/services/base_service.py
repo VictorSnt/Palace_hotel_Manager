@@ -48,6 +48,12 @@ class BaseService:
         return 200, {'message': 'Atualizado com sucesso'}
     
     @staticmethod
+    def delete(model, id):
+        obj = DataBaseHandler.get_by_id(model, id)
+        DataBaseHandler.delete(obj)
+        return 200, {'message': 'Deletado com sucesso'}
+    
+    @staticmethod
     def _validate_db_field(model: Model, dbfilter: DBFilter) -> None:
         if dbfilter and dbfilter.order_by: 
             DBValidator.is_valid_db_field(model, dbfilter.order_by)

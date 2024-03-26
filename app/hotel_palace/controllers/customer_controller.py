@@ -42,6 +42,10 @@ class CustomerController:
     def update(self, id, updater_schema: CreateOrUpdateCustomerSchema):
         return CustomerService.update(Customer, id, updater_schema)
     
+    @route.delete('/{id}')
+    def delete(self, id):
+        return CustomerService.delete(Customer, id)
+    
     @route.get('/{id}', response=customer)
     def get_by_id(self, id: UUID):
         return CustomerService.get_by_id(Customer, id)

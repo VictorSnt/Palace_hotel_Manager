@@ -7,12 +7,12 @@ from ...database.handlers.database_handler import DataBaseHandler
 from ...services.errors.error_payload_generator import ErrorPayloadGenerator
 from ...services.base_service import BaseService
 from ..errors.exceptions import ValidationError
-from ...models import Room
+from ...models import Accommodation, Room
 
 
 class AccommodationService(BaseService):
     
-    def update(self, model, id, update_schema: Schema):
+    def update(model, id, update_schema: Schema):
         current_obj = model.objects.get(pk=id)
         obj_dict = update_schema.model_dump()
         if not obj_dict.get('checkin_date'):
@@ -22,7 +22,17 @@ class AccommodationService(BaseService):
         AccommodationService._calc_hosting_price(obj_dict)
         DataBaseHandler.update(current_obj, obj_dict)
         return 200, {'detail': 'updated with success'}
-        
+    
+    @staticmethod
+    def delete(model, id):
+        obj: Accommodation = DataBaseHandler.get_by_id(model, id)
+        room = obj.room
+        room.status = "Livre"
+        room.save()
+        obj.is_active = False
+        obj.save()
+        return 200, {'message': 'Deletado com sucesso'}  
+     
     @staticmethod
     def _define_dates(obj: dict):
         today_date = datetime.now().date()
@@ -69,11 +79,9 @@ class AccommodationService(BaseService):
     
     @staticmethod
     def _validate_room(room: Room):
-        last_accommodation = room.accommodations.order_by('-created_at')
-        if last_accommodation.exists():
-            accommodation_obj = last_accommodation.first()
-            if accommodation_obj.is_active or room.status != "FREE":
-                ErrorPayloadGenerator.generate_422_error_detailed(
+        last_accommodation = room.accommodations.filter(is_active=True)
+        if last_accommodation.exists() or room.status != "Livre":
+            ErrorPayloadGenerator.generate_422_error_detailed(
                 exc=ValidationError,
                 status_code=400,
                 type='NotValidParams',
