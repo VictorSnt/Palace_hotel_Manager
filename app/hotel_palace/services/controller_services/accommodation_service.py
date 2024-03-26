@@ -1,5 +1,9 @@
 from datetime import datetime, time, timedelta
 from decimal import ROUND_UP, Decimal
+
+from ninja import Schema
+
+from ...database.handlers.database_handler import DataBaseHandler
 from ...services.errors.error_payload_generator import ErrorPayloadGenerator
 from ...services.base_service import BaseService
 from ..errors.exceptions import ValidationError
@@ -7,7 +11,18 @@ from ...models import Room
 
 
 class AccommodationService(BaseService):
-   
+    
+    def update(self, model, id, update_schema: Schema):
+        current_obj = model.objects.get(pk=id)
+        obj_dict = update_schema.model_dump()
+        if not obj_dict.get('checkin_date'):
+            obj_dict['checkin_date'] = current_obj.checkin_date
+        obj_dict['checkout_date'] = current_obj.checkout_date
+        obj_dict['room'] = current_obj.room
+        AccommodationService._calc_hosting_price(obj_dict)
+        DataBaseHandler.update(current_obj, obj_dict)
+        return 200, {'detail': 'updated with success'}
+        
     @staticmethod
     def _define_dates(obj: dict):
         today_date = datetime.now().date()
@@ -26,13 +41,7 @@ class AccommodationService(BaseService):
     
     @staticmethod
     def _calc_hosting_price(obj: dict):
-        if not 1 <= obj['guest_quant'] <= 4:
-            raise ValidationError(
-                'O quarto poder hospedar de 1 ate 4 pessoas' 
-                f' ({obj["guest_quant"]}) é uma quantidade invalida'
-                ,422
-            )
-        category = obj['room'].category
+        category = obj.get('room').category
         
         if obj['guest_quant'] == 1:
             obj['hosting_price'] = category.one_guest_price

@@ -21,9 +21,8 @@ class BaseService:
     @staticmethod
     def create(model: Model, model_schema: Schema) -> Success201:
         args = model, model_schema.model_dump()
-        response = DataBaseHandler.try_to_create(*args)
-        BaseService._validate_obj_creation(response)
-        return 201, {'message': 'Criado com sucesso'}
+        obj_id = DataBaseHandler.create(*args)
+        return 201, {'message': 'Criado com sucesso', 'id': obj_id}
     
     @staticmethod
     def get_all(model: Model, dbfilter: DBFilter) -> QuerySet:
@@ -33,12 +32,20 @@ class BaseService:
         return reservations
     
     @staticmethod
-    def get_by_ids(ids: str, model: Model, dbfilter: DBFilter=None) -> Model:
-        BaseService._validate_db_field(model, dbfilter) 
-        ids = BaseService._validate_n_parse_uuid(ids)
-        obj = DataBaseHandler.get_by_ids(model, ids, dbfilter)
-        BaseService._validate_queryset(obj)
+    def get_by_id(model: Model, id: str) -> Model: 
+        obj = DataBaseHandler.get_by_id(model, id)
         return obj
+    
+    @staticmethod
+    def get_by_ids(model: Model, ids: list, dbfilter: DBFilter) -> Model: 
+        obj = DataBaseHandler.get_by_ids(model, ids, dbfilter)
+        return obj
+
+    @staticmethod
+    def update(model, id, update_schema: Schema):
+        obj = DataBaseHandler.get_by_id(model, id)
+        DataBaseHandler.update(obj, update_schema.model_dump())
+        return 200, {'message': 'Atualizado com sucesso'}
     
     @staticmethod
     def _validate_db_field(model: Model, dbfilter: DBFilter) -> None:

@@ -1,9 +1,12 @@
+from uuid import UUID
 from django.http import HttpResponse
 from ninja import Query
 from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
     paginate, PageNumberPaginationExtra, PaginatedResponseSchema
 )
+
+from ..schemas.generic import IdList
 
 from ..models import Consume
 from ..schemas.models.consume_schema import (
@@ -17,23 +20,29 @@ from ..schemas.reponses.success_schemas import SuccessDetailed
 @api_controller('/consume', tags=['Consumes'])
 class ConsumeController:
     
-    get_method_responses = {
+    paginated_consumes = {
         200: PaginatedResponseSchema[ConsumeOutSchema],
-        404: ErrorDetailed,
-        422: ErrorDetailed
+        
+    }
+    consume = {
+        200: ConsumeOutSchema,
+        
     }
     post_method_responses = {
         201: SuccessDetailed,
-        409: ErrorDetailed,
-        422: ErrorDetailed
+        409: ErrorDetailed
     }
     
-    @route.get('/{id}', response=get_method_responses)
+    @route.get('/list', response=paginated_consumes)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
-        return ConsumeService.get_by_ids(id, Consume, dbfilter)
+    def get_by_ids(self, id_list: Query[IdList], dbfilter: Query[DBFilter]):
+        return ConsumeService.get_by_ids(Consume, id_list.ids, dbfilter)
     
-    @route.get('', response=get_method_responses)
+    @route.get('/{id}', response=consume)
+    def get_by_id(self, id: UUID):
+        return ConsumeService.get_by_id(Consume, id)
+    
+    @route.get('', response=paginated_consumes)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
         return ConsumeService.get_all(Consume, dbfilter)
@@ -41,4 +50,4 @@ class ConsumeController:
     @route.post('', response=post_method_responses)
     def create(self, consume: CreateConsumeSchema):
         return ConsumeService.create(Consume, consume)
-        
+    

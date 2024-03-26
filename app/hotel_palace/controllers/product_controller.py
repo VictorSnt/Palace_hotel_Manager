@@ -1,3 +1,4 @@
+from uuid import UUID
 from ninja import Query
 from ninja_extra import api_controller, route
 from ninja_extra.pagination import (
@@ -6,22 +7,23 @@ from ninja_extra.pagination import (
 
 from ..models import Product
 from ..schemas.models.product_schema import (
-    CreateProductSchema, ProductOutSchema
+    CreateProductSchema, ProductOutSchema, UpdateProductSchema
 )
 from ..schemas.query_strings.database_filter import DBFilter
 from ..services.controller_services.product_service import ProductService
 from ..schemas.reponses.success_schemas import SuccessDetailed
 from ..schemas.reponses.error_schemas import ErrorDetailed
-
+from ..schemas.generic import IdList
 
 
 @api_controller('/product', tags=['Products'])
 class ProductController:
     
-    get_method_responses = {
+    paginated_products = {
         200: PaginatedResponseSchema[ProductOutSchema],
-        404: ErrorDetailed,
-        422: ErrorDetailed
+    }
+    product = {
+        200: ProductOutSchema,
     }
     post_method_responses = {
         201: SuccessDetailed,
@@ -29,12 +31,20 @@ class ProductController:
         422: ErrorDetailed
     }
     
-    @route.get('/{id}', response=get_method_responses)
+    @route.get('/list', response=paginated_products)
     @paginate(PageNumberPaginationExtra, page_size=36)
-    def get_by_id(self, id: str, dbfilter: Query[DBFilter]):
-        return ProductService.get_by_ids(id, Product, dbfilter)
+    def get_by_ids(self, id_list: Query[IdList], dbfilter: Query[DBFilter]):
+        return ProductService.get_by_ids(Product, id_list.ids, dbfilter)
+
+    @route.put('/{id}')
+    def update(self, id, updater_schema: UpdateProductSchema):
+        return ProductService.update(Product, id, updater_schema)
     
-    @route.get('', response=get_method_responses)
+    @route.get('/{id}', response=product)
+    def get_by_id(self, id: UUID):
+        return ProductService.get_by_id(Product, id)
+    
+    @route.get('', response=paginated_products)
     @paginate(PageNumberPaginationExtra, page_size=36)
     def get(self, dbfilter: Query[DBFilter]):
         return ProductService.get_all(Product, dbfilter)

@@ -13,7 +13,7 @@ class ReservationService(BaseService):
     def _validate_reservation(reserv_schema: dict):
         try:
             room = reserv_schema['room']
-            query = {'checkin_date': reserv_schema.checkin_date}
+            query = {'checkin_date': reserv_schema['checkin_date']}
             reserv = Reservation.objects.get(**query)
             if reserv.room.number == room.number:
                 ErrorPayloadGenerator.generate_422_error_detailed(

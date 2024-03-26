@@ -26,8 +26,26 @@ class CreateReservationSchema(ModelSchema):
     
     def model_dump(self, *args, **kwargs):
         schema_dict = super().model_dump(*args, **kwargs)
-        category_id = schema_dict.get('room')
-        instance = get_object_or_404(Room, pk=category_id)
-        schema_dict['room'] = instance
-        ReservationService._validate_reservation(schema_dict)
+        room_id = schema_dict.get('room', False)
+        if room_id:
+            instance = get_object_or_404(Room, pk=room_id)
+            schema_dict['room'] = instance
+            ReservationService._validate_reservation(schema_dict)
         return schema_dict
+
+class UpdateReservationSchema(ModelSchema):
+    class Config:
+        model = Reservation
+        include = [
+            'room', 
+            'checkin_date', 
+            'customer_name'
+        ]
+        
+        optional = [
+            'room', 
+            'checkin_date', 
+            'customer_name'
+        ]
+    
+    

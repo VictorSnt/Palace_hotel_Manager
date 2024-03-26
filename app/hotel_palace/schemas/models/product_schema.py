@@ -11,4 +11,10 @@ class CreateProductSchema(ModelSchema):
     class Config:
         model = Product
         include = ['description', 'price']
+        
+class UpdateProductSchema(ModelSchema):
+    class Config:
+        model = Product
+        include = ['description', 'price']
+        optional = ['description', 'price']
     

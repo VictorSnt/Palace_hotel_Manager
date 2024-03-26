@@ -6,7 +6,7 @@ from ninja_schema import ModelSchema, model_validator
 from ...models import Customer
 from ...services.errors.exceptions import ValidationError
 
-class CreateCustomerSchema(ModelSchema):
+class CreateOrUpdateCustomerSchema(ModelSchema):
     
     class Config:
         model = Customer

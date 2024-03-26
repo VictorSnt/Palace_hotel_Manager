@@ -19,3 +19,12 @@ class CategoryOutSchema(ModelSchema):
             'one_guest_price', 'two_guest_price',
             'three_guest_price', 'four_guest_price' 
         ]
+
+class UpdateCategorySchema(ModelSchema):
+    class Config:
+        model = Category
+        include = [
+            'description', 'one_guest_price',
+            'two_guest_price', 'three_guest_price',
+            'four_guest_price' 
+        ]

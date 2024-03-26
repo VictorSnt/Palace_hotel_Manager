@@ -1,37 +1,15 @@
+import json
 from django.db.models.query import QuerySet
 from django.db.models import Model
-
-from typing import List
 from uuid import UUID
-
-from ninja import Schema
-from ...services.errors.exceptions import IntegrityError
+from django.shortcuts import get_list_or_404, get_object_or_404
+from ...services.errors.exceptions import IntegrityError, ValidationError
 from ...schemas.query_strings.database_filter import DBFilter
 
 
 class DataBaseHandler:
     @staticmethod
-    def get_all(
-        model_class: Model, 
-        dbfilter: DBFilter = None
-        ) -> QuerySet[Model]:
-        """
-        Retorna uma queryset de todas as instâncias do modelo especificado.
-
-        Parâmetros:
-        - model_class: Classe do modelo Django.
-        - dbfilter: Argumentos opcionais.
-            - 'order_by' (opcional, padrão created_at): 
-                Campo de ordenação para a queryset.
-                Exemplo: 'order_by="nome"' (ordenação pelo campo 'nome').
-            
-            - 'ascending' (opcional, padrão True): 
-                Define se ordenação é ascendente (True) ou descendente (False).
-
-        Retorna:
-        Uma queryset contendo todas as instâncias do modelo,
-        opcionalmente ordenada.
-        """
+    def get_all(model_class: Model, dbfilter: DBFilter)-> QuerySet:
         key = '-created_at' #padrão
         queryset = model_class.objects.all()
         if dbfilter and dbfilter.order_by:
@@ -39,62 +17,40 @@ class DataBaseHandler:
         return queryset.order_by(key)
 
     @staticmethod
-    def get_by_ids(
-            model_class: Model, ids: List[UUID],
-            dbfilter: DBFilter = None
-        ) -> QuerySet[Model]:
-        """
-        Retorna uma queryset de instâncias do modelo especificado com IDs 
-        fornecidos, opcionalmente ordenada.
-
-        Parâmetros:
-        - model_class: Classe do modelo Django.
-        - ids: Lista de UUIDs das instâncias a serem recuperadas.
-        - dbfilter: Argumentos opcionais.
-            - 'order_by' (opcional, padrão created_at): 
-                Campo de ordenação para a queryset.
-                Exemplo: 'order_by="nome"' (ordenação pelo campo 'nome').
-            
-            - 'ascending' (opcional, padrão True): 
-                Define se ordenação é ascendente (True) ou descendente (False).
-        Retorna:
-        Uma queryset contendo todas as instâncias do modelo,
-        opcionalmente ordenada.
-        """
-        key = '-created_at' #padrão
-        queryset = model_class.objects.filter(id__in=ids)
-        if dbfilter and dbfilter.order_by:
-            key = DataBaseHandler.__order_by(dbfilter)
-        return queryset.order_by(key)
-
-            
+    def get_by_id(model_class: Model, id: UUID) -> Model:
+        obj = get_object_or_404(model_class, pk=id)
+        return obj
+    
     @staticmethod
-    def try_to_create(
-        model_class: Model, 
-        model_schema: dict,
-        allow_dups=False
-        ) -> tuple[Model, bool]:
+    def get_by_ids(model_class: Model, ids, dbfilter: DBFilter)-> QuerySet:
+        key = 'created_at'
+        obj_list = get_list_or_404(model_class, id__in=ids)
+        if dbfilter and dbfilter.order_by:
+            sort_filter = {
+                'key': lambda x: getattr(x, dbfilter.order_by),
+                'reverse': not dbfilter.ascending
+            }
+            obj_list = sorted(obj_list, **sort_filter)
+        return obj_list
+    
+    @staticmethod
+    def create(model_class: Model, model_schema: dict) -> UUID:
         try:
-            if allow_dups:
-                return model_class.objects.create(**model_schema), True
-            else:
-                return model_class.objects.get_or_create(**model_schema)
-                
-        except IntegrityError:
-            unique_field_name = [
-                field.name for field in model_class._meta.fields 
-                if field.unique and field.name in model_schema.keys()
-            ][0]
-            query = {unique_field_name: model_schema[unique_field_name]}
-            existing_instance = model_class.objects.filter(**query).first()
-            return existing_instance, False
+            return model_class.objects.create(**model_schema).id
+        except IntegrityError as e:
+            message = json.dumps({'detail': str(e)})
+            raise ValidationError(message, 409)
             
     @staticmethod
     def update(obj: Model, props: dict):
-        for key, value in props.items():
-            if value:
-                setattr(obj, key, value)
-        obj.save()
+        try:
+            for key, value in props.items():
+                if value:
+                    setattr(obj, key, value)
+            obj.save()
+        except IntegrityError as e:
+            message = json.dumps({'detail': str(e)})
+            raise ValidationError(message, 409)
     
     @staticmethod
     def __order_by(dbfilter: DBFilter) -> QuerySet:
