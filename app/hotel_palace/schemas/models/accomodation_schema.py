@@ -59,5 +59,3 @@ class AccommodationOutSchema(ModelSchema):
             'total_bill'
         ]
     
-    
-    

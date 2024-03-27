@@ -28,7 +28,7 @@ class CreateRoomSchema(ModelSchema):
         return schema_dict
 
     @model_validator('number')
-    def validate_enum(cls, number: str):
+    def validate_number(cls, number: str):
         if not number.isnumeric():
             msg = json.dumps(
                 {

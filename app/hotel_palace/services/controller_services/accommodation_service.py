@@ -15,10 +15,11 @@ class AccommodationService(BaseService):
     def update(model, id, update_schema: Schema):
         current_obj = model.objects.get(pk=id)
         obj_dict = update_schema.model_dump()
-        if not obj_dict.get('checkin_date'):
-            obj_dict['checkin_date'] = current_obj.checkin_date
+        check_in_date = obj_dict.get('checkin_date')
+        obj_dict['checkin_date'] =  check_in_date or current_obj.checkin_date
         obj_dict['checkout_date'] = current_obj.checkout_date
         obj_dict['room'] = current_obj.room
+        obj_dict['guest_quant'] = current_obj.guest_quant
         AccommodationService._calc_hosting_price(obj_dict)
         DataBaseHandler.update(current_obj, obj_dict)
         return 200, {'detail': 'updated with success'}
@@ -27,12 +28,16 @@ class AccommodationService(BaseService):
     def delete(model, id):
         obj: Accommodation = DataBaseHandler.get_by_id(model, id)
         room = obj.room
-        room.status = "Livre"
+        room.status = "Sujo"
         room.save()
         obj.is_active = False
         obj.save()
         return 200, {'message': 'Deletado com sucesso'}  
-     
+    
+    @staticmethod
+    def generate_report():
+        pass
+    
     @staticmethod
     def _define_dates(obj: dict):
         today_date = datetime.now().date()
@@ -72,7 +77,7 @@ class AccommodationService(BaseService):
         obj['total_hosting_price'] = obj['hosting_price'] * int(days_diff)
         obj['total_bill'] = obj['total_hosting_price']
         room = obj['room']
-        room.status = 'OCCUPIED'
+        room.status = 'Ocupado'
         room.save()
         obj['is_active'] = True
         

@@ -6,11 +6,11 @@ from ninja_extra.pagination import (
 )
 
 from ..schemas.generic import IdList
-
 from ..models import Accommodation
 from ..schemas.query_strings.database_filter import DBFilter
 from ..schemas.models.accomodation_schema import (
-    CreateAccommodationSchema, AccommodationOutSchema, UpdateAccommodationSchema
+    CreateAccommodationSchema, AccommodationOutSchema, 
+    UpdateAccommodationSchema
 )
 from ..services.controller_services.accommodation_service import (
     AccommodationService

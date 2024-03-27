@@ -92,7 +92,9 @@ class Accommodation(models.Model):
     room = models.ForeignKey(
         Room, on_delete=models.PROTECT, related_name='accommodations'
     )
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey(
+        Customer, on_delete=models.PROTECT,related_name='accommodations'
+    )
     guest_quant = models.IntegerField(
         
         choices=[(s.value, s.name) for s in GuestQuantity], 

@@ -22,7 +22,7 @@ class CreateProductSchema(ModelSchema):
         return description
     
     @model_validator('price')
-    def validate_description(cls, price):
+    def validate_price(cls, price):
         if price <= 0:
             msg = json.dumps({'detail': 'O preço deve ser maior que 0'})
             raise ValidationError(msg, 422)
